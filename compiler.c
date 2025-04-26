@@ -43,14 +43,34 @@ void parseNumber() {
     free(buffer);
 }
 
-void compileInput() {
-    pos = 0;
-
-    nextChar(); 
-
+void parseExpression () {
     if (isDigit(currentChar)) {
         parseNumber();
     }
+
+    if (currentChar == '+') {
+        nextChar();
+        parseExpression();
+        
+        addToCompiled(
+            "\n"
+            "\tpop %%rax\n"
+            "\tpop %%rbx\n"
+            "\tadd %%rbx, %%rax\n"
+            "\tpush %%rax\n"
+            "\n"
+        );
+    }
+
+    return;
+}
+
+void compileInput() {
+    pos = 0;
+
+    nextChar();
+
+    parseExpression();
 
     return;
 }
@@ -87,7 +107,7 @@ int main() {
     initialCode();
 
     // set input to compiler
-    input = "23";
+    input = "23+77";
 
     // generate main code
     compileInput();
