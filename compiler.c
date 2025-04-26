@@ -21,8 +21,12 @@ int addToCompiled (const char *code) {
 int finalCode() {
     // Output top of stack to exit code
     strcat(compiled,
-        "pop %%rax     # Top of stack into rax, 32 lowest bit will be in exit code\n"
-        "ret               # Return from main\n"
+        "\n"
+        "\t# Final code follows, this takes value from top of stack and places in exit code\n"
+        "\t# Note only the 32 lowest bits of RAX will be used in exit code\n"
+        "\n"
+        "\tpop %%rax\n"
+        "\tret\t# Return from main\n"
     );
 }
 
@@ -45,7 +49,7 @@ int main() {
     initialCode();
 
     // main code
-    addToCompiled("push $2\n");
+    addToCompiled("\tpush $2\n");
 
     finalCode();
 
