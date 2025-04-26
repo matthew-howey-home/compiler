@@ -2,9 +2,12 @@
 #include <string.h>
 #include <stdlib.h>
 
+char* input;
 char* compiled;
+char currentChar;
+int pos;
 
-int initialCode() {
+void initialCode() {
     strcpy(compiled,
         ".section .text\n"
         ".global main\n\n"
@@ -13,9 +16,43 @@ int initialCode() {
     printf(compiled);
 }
 
-int addToCompiled (const char *code) {
+void addToCompiled (const char *code) {
     printf(code);
     strcat(compiled, code);
+}
+
+void nextChar() {
+    currentChar = input[pos++];
+}
+
+int isDigit(char c) {
+    return c >= '0' && c <= '9';
+}
+
+// Parse a number and emit a push instruction
+void parseNumber() {
+    int value = 0;
+    while (isDigit(currentChar)) {
+        value = value * 10 + (currentChar - '0');
+        nextChar();
+    }
+
+    char* buffer = malloc(20);
+    sprintf(buffer, "\tpush $%d\n", value);
+    addToCompiled(buffer);
+    free(buffer);
+}
+
+void compileInput() {
+    pos = 0;
+
+    nextChar(); 
+
+    if (isDigit(currentChar)) {
+        parseNumber();
+    }
+
+    return;
 }
 
 int finalCode() {
@@ -43,13 +80,17 @@ int writeCompiledToFile () {
 
 int main() {
     compiled = malloc(1000);
+    input = malloc(100);
 
     printf("\nOutput from compiler follows:\n\n");
 
     initialCode();
 
-    // main code
-    addToCompiled("\tpush $2\n");
+    // set input to compiler
+    input = "23";
+
+    // generate main code
+    compileInput();
 
     finalCode();
 
