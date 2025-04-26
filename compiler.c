@@ -43,26 +43,43 @@ void parseNumber() {
     free(buffer);
 }
 
-void parseExpression () {
-    if (isDigit(currentChar)) {
-        parseNumber();
-    }
 
-    if (currentChar == '+') {
+void parseFactor() {
+    if (isDigit(currentChar)) {
+        parseNumber();  // emits "push number"
+    } else {
+        // You could add support for parentheses here later if you want!
+    }
+}
+
+void parseTerm() {
+    parseFactor();
+    while (currentChar == '*') {
         nextChar();
-        parseExpression();
-        
+        parseFactor();
+        addToCompiled(
+            "\n"
+            "\tpop %%rax\n"
+            "\tpop %%rbx\n"
+            "\timul %%rbx, %%rax\n"   // <<< use IMUL for multiplication
+            "\tpush %%rax\n\n"
+        );
+    }
+}
+
+void parseExpression() {
+    parseTerm();
+    while (currentChar == '+') {
+        nextChar();
+        parseTerm();
         addToCompiled(
             "\n"
             "\tpop %%rax\n"
             "\tpop %%rbx\n"
             "\tadd %%rbx, %%rax\n"
-            "\tpush %%rax\n"
-            "\n"
+            "\tpush %%rax\n\n"
         );
     }
-
-    return;
 }
 
 void compileInput() {
@@ -107,7 +124,11 @@ int main() {
     initialCode();
 
     // set input to compiler
-    input = "23+77";
+    input = "2+3*5+2*100";
+
+    addToCompiled("\t# Evaluating: ");
+    addToCompiled(input);
+    addToCompiled("\n\n");
 
     // generate main code
     compileInput();
