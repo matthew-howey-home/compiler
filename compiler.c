@@ -69,14 +69,22 @@ void parseTerm() {
 
 void parseExpression() {
     parseTerm();
-    while (currentChar == '+') {
+    while (currentChar == '+' || currentChar == '-') {
+        char operator = currentChar;
         nextChar();
         parseTerm();
         addToCompiled(
             "\n"
-            "\tpop %%rax\n"
-            "\tpop %%rbx\n"
-            "\tadd %%rbx, %%rax\n"
+            "\tpop %%rbx\t# right hand operand\n"
+            "\tpop %%rax\t# left and operand\n"
+        );
+        if (operator == '+') {
+            addToCompiled("\tadd %%rbx, %%rax\t# rax = rax + rbx\n");
+        } else {
+            // sub %rbx, %rax	rax = rax - rbx
+            addToCompiled("\tsub %%rbx, %%rax\t# rax = rax - rbx\n");
+        }
+        addToCompiled(
             "\tpush %%rax\n\n"
         );
     }
@@ -124,7 +132,7 @@ int main() {
     initialCode();
 
     // set input to compiler
-    input = "2+3*5+2*100";
+    input = "2-3*5+8";
 
     addToCompiled("\t# Evaluating: ");
     addToCompiled(input);
