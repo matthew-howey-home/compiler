@@ -54,16 +54,24 @@ void parseFactor() {
 
 void parseTerm() {
     parseFactor();
-    while (currentChar == '*') {
+    while (currentChar == '*' || currentChar == '/') {
+        char operator = currentChar;
         nextChar();
         parseFactor();
         addToCompiled(
             "\n"
-            "\tpop %%rax\n"
             "\tpop %%rbx\n"
-            "\timul %%rbx, %%rax\n"   // <<< use IMUL for multiplication
-            "\tpush %%rax\n\n"
+            "\tpop %%rax\n"
         );
+        if (operator == '*') {
+            addToCompiled("\timul %%rbx, %%rax\n");
+        } else {
+            addToCompiled(
+                "\tcqo # convert quad rax to oct rdx:rax\n"
+                "\tidiv %%rbx # loads rdx:rax / rbx into rax\n"
+            );
+        }
+        addToCompiled( "\tpush %%rax\n\n");
     }
 }
 
@@ -132,7 +140,7 @@ int main() {
     initialCode();
 
     // set input to compiler
-    input = "2-3*5+8";
+    input = "10/5";
 
     addToCompiled("\t# Evaluating: ");
     addToCompiled(input);
