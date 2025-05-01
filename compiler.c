@@ -64,11 +64,11 @@ void parseTerm() {
             "\tpop %%rax\n"
         );
         if (operator == '*') {
-            addToCompiled("\timul %%rbx, %%rax\n");
+            addToCompiled("\timul %%rbx, %%rax\t\t# rax = rax * rbx\n");
         } else {
             addToCompiled(
-                "\tcqo # convert quad rax to oct rdx:rax\n"
-                "\tidiv %%rbx # loads rdx:rax / rbx into rax\n"
+                "\tcqo\t\t\t\t# convert quad rax to oct rdx:rax\n"
+                "\tidiv %%rbx\t\t# rax = rdx:rax / rbx\n"
             );
         }
         addToCompiled( "\tpush %%rax\n\n");
@@ -83,14 +83,14 @@ void parseExpression() {
         parseTerm();
         addToCompiled(
             "\n"
-            "\tpop %%rbx\t# right hand operand\n"
-            "\tpop %%rax\t# left and operand\n"
+            "\tpop %%rbx\t\t\t# right hand operand\n"
+            "\tpop %%rax\t\t\t# left and operand\n"
         );
         if (operator == '+') {
-            addToCompiled("\tadd %%rbx, %%rax\t# rax = rax + rbx\n");
+            addToCompiled("\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
         } else {
             // sub %rbx, %rax	rax = rax - rbx
-            addToCompiled("\tsub %%rbx, %%rax\t# rax = rax - rbx\n");
+            addToCompiled("\tsub %%rbx, %%rax\t\t# rax = rax - rbx\n");
         }
         addToCompiled(
             "\tpush %%rax\n\n"
