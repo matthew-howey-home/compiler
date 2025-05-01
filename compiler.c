@@ -140,7 +140,7 @@ int main() {
     initialCode();
 
     // set input to compiler
-    input = "10/5";
+    input = "10/5+3*2*3-10";
 
     addToCompiled("\t# Evaluating: ");
     addToCompiled(input);
