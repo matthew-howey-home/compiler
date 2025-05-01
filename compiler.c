@@ -2,27 +2,31 @@
 #include <string.h>
 #include <stdlib.h>
 
-char* input;
-char* compiled;
+struct globalCtx {
+    char* input;
+    char* compiled;
+};
+
 char currentChar;
 int pos;
 
-void initialCode() {
-    strcpy(compiled,
+void initialCode(struct globalCtx ctx) {
+    strcpy(ctx.compiled,
         ".section .text\n"
         ".global main\n\n"
         "main:\n"
     );
-    printf(compiled);
+    printf(ctx.compiled);
 }
 
-void addToCompiled (const char *code) {
+void addToCompiled (struct globalCtx ctx, const char *code) {
     printf(code);
-    strcat(compiled, code);
+    strcat(ctx.compiled, code);
 }
 
-void nextChar() {
-    currentChar = input[pos++];
+void nextChar(struct globalCtx ctx)
+{
+    currentChar = ctx.input[pos++];
 }
 
 int isDigit(char c) {
@@ -30,87 +34,87 @@ int isDigit(char c) {
 }
 
 // Parse a number and emit a push instruction
-void parseNumber() {
+void parseNumber(struct globalCtx ctx) {
     int value = 0;
     while (isDigit(currentChar)) {
         value = value * 10 + (currentChar - '0');
-        nextChar();
+        nextChar(ctx);
     }
 
     char* buffer = malloc(20);
     sprintf(buffer, "\tpush $%d\n", value);
-    addToCompiled(buffer);
+    addToCompiled(ctx, buffer);
     free(buffer);
 }
 
 
-void parseFactor() {
+void parseFactor(struct globalCtx ctx) {
     if (isDigit(currentChar)) {
-        parseNumber();  // emits "push number"
+        parseNumber(ctx);  // emits "push number"
     } else {
         // You could add support for parentheses here later if you want!
     }
 }
 
-void parseTerm() {
-    parseFactor();
+void parseTerm(struct globalCtx ctx) {
+    parseFactor(ctx);
     while (currentChar == '*' || currentChar == '/') {
         char operator = currentChar;
-        nextChar();
-        parseFactor();
-        addToCompiled(
+        nextChar(ctx);
+        parseFactor(ctx);
+        addToCompiled(ctx,
             "\n"
             "\tpop %%rbx\n"
             "\tpop %%rax\n"
         );
         if (operator == '*') {
-            addToCompiled("\timul %%rbx, %%rax\t\t# rax = rax * rbx\n");
+            addToCompiled(ctx, "\timul %%rbx, %%rax\t\t# rax = rax * rbx\n");
         } else {
-            addToCompiled(
+            addToCompiled(ctx,
                 "\tcqo\t\t\t\t# convert quad rax to oct rdx:rax\n"
                 "\tidiv %%rbx\t\t# rax = rdx:rax / rbx\n"
             );
         }
-        addToCompiled( "\tpush %%rax\n\n");
+        addToCompiled(ctx, "\tpush %%rax\n\n");
     }
 }
 
-void parseExpression() {
-    parseTerm();
+void parseExpression(struct globalCtx ctx) {
+    parseTerm(ctx);
     while (currentChar == '+' || currentChar == '-') {
         char operator = currentChar;
-        nextChar();
-        parseTerm();
-        addToCompiled(
+        nextChar(ctx);
+        parseTerm(ctx);
+        addToCompiled(ctx,
             "\n"
             "\tpop %%rbx\t\t\t# right hand operand\n"
             "\tpop %%rax\t\t\t# left and operand\n"
         );
         if (operator == '+') {
-            addToCompiled("\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
+            addToCompiled(ctx, "\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
         } else {
             // sub %rbx, %rax	rax = rax - rbx
-            addToCompiled("\tsub %%rbx, %%rax\t\t# rax = rax - rbx\n");
+            addToCompiled(ctx, "\tsub %%rbx, %%rax\t\t# rax = rax - rbx\n");
         }
-        addToCompiled(
+        addToCompiled(ctx,
             "\tpush %%rax\n\n"
         );
     }
 }
 
-void compileInput() {
+void compileInput(struct globalCtx ctx) {
     pos = 0;
 
-    nextChar();
+    nextChar(ctx);
 
-    parseExpression();
+    parseExpression(ctx);
 
     return;
 }
 
-int finalCode() {
+int finalCode(struct globalCtx ctx) {
     // Output top of stack to exit code
-    strcat(compiled,
+    strcat(ctx.compiled,
         "\n"
         "\t# Final code follows, this takes value from top of stack and places in exit code\n"
         "\t# Note only the 32 lowest bits of RAX will be used in exit code\n"
@@ -120,38 +124,19 @@ int finalCode() {
     );
 }
 
-int writeCompiledToFile () {
-    FILE *file = fopen("compiled_assembly.s", "w");
-    if (file == NULL) {
-        printf("Error opening file for writing.\n");
-        return 1;
-    }
-    fprintf(file, compiled);
-    fclose(file);
-    printf("\nCompiled assembly code written to file compiled_assembly.s\n\n");
-}
 
-int main() {
-    compiled = malloc(1000);
-    input = malloc(100);
-
+void compiler(struct globalCtx ctx) {
     printf("\nOutput from compiler follows:\n\n");
 
-    initialCode();
+    initialCode(ctx);
 
-    // set input to compiler
-    input = "10/5+3*2*3-10";
 
-    addToCompiled("\t# Evaluating: ");
-    addToCompiled(input);
-    addToCompiled("\n\n");
+    addToCompiled(ctx, "\t# Evaluating: ");
+    addToCompiled(ctx, ctx.input);
+    addToCompiled(ctx, "\n\n");
 
     // generate main code
-    compileInput();
+    compileInput(ctx);
 
-    finalCode();
-
-    writeCompiledToFile();
-
-    return 0;
+    finalCode(ctx);
 }
