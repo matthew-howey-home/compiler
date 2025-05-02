@@ -24,6 +24,8 @@ int writeCompiledToFile (char* compiled, int fileIndex) {
     fprintf(file, compiled);
     fclose(file);
     printf("\nCompiled assembly code written to file %s\n\n", filename);
+
+    free(filename);
 }
 
 void testCompiler(char* input, int expectedResult, int fileIndex) {
@@ -36,7 +38,10 @@ void testCompiler(char* input, int expectedResult, int fileIndex) {
     writeCompiledToFile(ctx.compiled, fileIndex);
 
     // Assemble compiled assembly
-    system("gcc -o assembled_machine_code.exe compiled_assembly.s");
+    char* buffer = malloc(100);
+    sprintf(buffer, "gcc -o assembled_machine_code.exe compiled_assembly-%d.s", fileIndex);
+    system(buffer);
+    free(buffer);
 
     // Run assembled machine code
     result = system("assembled_machine_code.exe");
@@ -56,6 +61,7 @@ int main() {
     testCompiler("11+5", 16, 1);
     testCompiler("10/5+3*2*3-11", 9, 2);
     testCompiler("10/5+3*2-11+5", 2, 3);
+   //  testCompiler("10 / 5 +3*  2-11 5", 2, 4);
    
     return 0;
 }
