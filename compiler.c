@@ -16,11 +16,10 @@ void initialCode(struct globalCtx* ctx) {
         ".global main\n\n"
         "main:\n"
     );
-    printf(ctx->compiled);
 }
 
 void addToCompiled (struct globalCtx* ctx, const char *code) {
-    printf(code);
+    // printf(code);
     strcat(ctx->compiled, code);
 }
 
@@ -126,7 +125,7 @@ int finalCode(struct globalCtx* ctx) {
 
 
 void compiler(struct globalCtx* ctx) {
-    printf("\nOutput from compiler follows:\n\n");
+    // printf("\nOutput from compiler follows:\n\n");
 
     initialCode(ctx);
 
