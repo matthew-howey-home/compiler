@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct globalCtx {
     char* input;
     char* compiled;
 };
+
+struct globalCtx ctx;
 
 // Declaration of the compiler function
 void compiler(struct globalCtx* ctx);
@@ -20,22 +23,11 @@ int writeCompiledToFile (char* compiled) {
     printf("\nCompiled assembly code written to file compiled_assembly.s\n\n");
 }
 
-int main() {
-    struct globalCtx ctx;
-    char* compiled = malloc(1000);
-    char* input = malloc(100);
-    ctx.compiled = compiled;
-    ctx.input = input;
-
+void testCompiler(char* input) {
     int result;
+    ctx.input = malloc(100);
+    strcpy(ctx.input, input);
 
-    // set input to compiler
-    ctx.input = "10/5+3*2*3-10";
-
-    // Compile and run compiler
-    printf("####################\n");
-    printf("Running compiler\n");
-    printf("####################\n");
     compiler(&ctx);
 
     writeCompiledToFile(ctx.compiled);
@@ -47,5 +39,12 @@ int main() {
     result = system("assembled_machine_code.exe");
 
     printf("Output from running assembled machine code: %d\n\n", result);
+}
+
+int main() {
+    ctx.compiled = malloc(1000);
+
+    testCompiler("10/5+3*2*3-11");
+   
     return 0;
 }
