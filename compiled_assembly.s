@@ -2,7 +2,7 @@
 .global main
 
 main:
-	# Evaluating: 10/5+3*2*3-11
+	# Evaluating: 10/5+3*2-11+5
 
 	push $10
 	push $5
@@ -21,13 +21,6 @@ main:
 	imul %rbx, %rax		# rax = rax * rbx
 	push %rax
 
-	push $3
-
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
-	imul %rbx, %rax		# rax = rax * rbx
-	push %rax
-
 
 	pop %rbx			# right hand operand
 	pop %rax			# left hand operand
@@ -39,6 +32,13 @@ main:
 	pop %rbx			# right hand operand
 	pop %rax			# left hand operand
 	sub %rbx, %rax		# rax = rax - rbx
+	push %rax
+
+	push $5
+
+	pop %rbx			# right hand operand
+	pop %rax			# left hand operand
+	add %rbx, %rax		# rax = rax + rbx
 	push %rax
 
 

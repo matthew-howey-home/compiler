@@ -23,7 +23,7 @@ int writeCompiledToFile (char* compiled) {
     printf("\nCompiled assembly code written to file compiled_assembly.s\n\n");
 }
 
-void testCompiler(char* input) {
+void testCompiler(char* input, int expectedResult) {
     int result;
     ctx.input = malloc(100);
     strcpy(ctx.input, input);
@@ -39,12 +39,19 @@ void testCompiler(char* input) {
     result = system("assembled_machine_code.exe");
 
     printf("Output from running assembled machine code: %d\n\n", result);
+
+    if (result == expectedResult) {
+        printf("Test Passed!");
+    } else {
+        printf("Test failed, expected result %d, actual result %d", expectedResult, result);
+    }
 }
 
 int main() {
     ctx.compiled = malloc(1000);
 
-    testCompiler("10/5+3*2*3-11");
+    testCompiler("10/5+3*2*3-11", 9);
+    testCompiler("10/5+3*2-11+5", 2);
    
     return 0;
 }
