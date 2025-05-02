@@ -41,15 +41,16 @@ void testCompiler(char* input, int expectedResult) {
     printf("Output from running assembled machine code: %d\n\n", result);
 
     if (result == expectedResult) {
-        printf("Test Passed!");
+        printf("Test Passed!\n");
     } else {
-        printf("Test failed, expected result %d, actual result %d", expectedResult, result);
+        printf("Test failed, expected result %d, actual result %d\n", expectedResult, result);
     }
 }
 
 int main() {
     ctx.compiled = malloc(1000);
 
+    testCompiler("11+5", 16);
     testCompiler("10/5+3*2*3-11", 9);
     testCompiler("10/5+3*2-11+5", 2);
    
