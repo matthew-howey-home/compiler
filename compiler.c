@@ -28,6 +28,12 @@ void nextChar(struct globalCtx* ctx)
     currentChar = ctx->input[pos++];
 }
 
+void skipWhitespace(struct globalCtx* ctx) {
+    while(currentChar == ' ') {
+        nextChar(ctx);
+    }    
+}
+
 int isDigit(char c) {
     return c >= '0' && c <= '9';
 }
@@ -48,6 +54,7 @@ void parseNumber(struct globalCtx* ctx) {
 
 
 void parseFactor(struct globalCtx* ctx) {
+    skipWhitespace(ctx);
     if (isDigit(currentChar)) {
         parseNumber(ctx);  // emits "push number"
     } else {
@@ -57,6 +64,8 @@ void parseFactor(struct globalCtx* ctx) {
 
 void parseTerm(struct globalCtx* ctx) {
     parseFactor(ctx);
+
+    skipWhitespace(ctx);
     while (currentChar == '*' || currentChar == '/') {
         char operator = currentChar;
         nextChar(ctx);
@@ -80,6 +89,8 @@ void parseTerm(struct globalCtx* ctx) {
 
 void parseExpression(struct globalCtx* ctx) {
     parseTerm(ctx);
+
+    skipWhitespace(ctx);
     while (currentChar == '+' || currentChar == '-') {
         char operator = currentChar;
         nextChar(ctx);

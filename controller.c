@@ -61,7 +61,7 @@ int main() {
     testCompiler("11+5", 16, 1);
     testCompiler("10/5+3*2*3-11", 9, 2);
     testCompiler("10/5+3*2-11+5", 2, 3);
-   //  testCompiler("10 / 5 +3*  2-11 5", 2, 4);
+    testCompiler("10 / 5 +3*  2-11 + 5", 2, 4);
    
     return 0;
 }
