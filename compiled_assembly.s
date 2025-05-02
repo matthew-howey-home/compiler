@@ -7,8 +7,8 @@ main:
 	push $10
 	push $5
 
-	pop %rbx
-	pop %rax
+	pop %rbx			# right hand operand
+	pop %rax			# left hand operand
 	cqo				# convert quad rax to oct rdx:rax
 	idiv %rbx		# rax = rdx:rax / rbx
 	push %rax
@@ -16,28 +16,28 @@ main:
 	push $3
 	push $2
 
-	pop %rbx
-	pop %rax
+	pop %rbx			# right hand operand
+	pop %rax			# left hand operand
 	imul %rbx, %rax		# rax = rax * rbx
 	push %rax
 
 	push $3
 
-	pop %rbx
-	pop %rax
+	pop %rbx			# right hand operand
+	pop %rax			# left hand operand
 	imul %rbx, %rax		# rax = rax * rbx
 	push %rax
 
 
 	pop %rbx			# right hand operand
-	pop %rax			# left and operand
+	pop %rax			# left hand operand
 	add %rbx, %rax		# rax = rax + rbx
 	push %rax
 
 	push $10
 
 	pop %rbx			# right hand operand
-	pop %rax			# left and operand
+	pop %rax			# left hand operand
 	sub %rbx, %rax		# rax = rax - rbx
 	push %rax
 

@@ -10,23 +10,23 @@ struct globalCtx {
 char currentChar;
 int pos;
 
-void initialCode(struct globalCtx ctx) {
-    strcpy(ctx.compiled,
+void initialCode(struct globalCtx* ctx) {
+    strcpy(ctx->compiled,
         ".section .text\n"
         ".global main\n\n"
         "main:\n"
     );
-    printf(ctx.compiled);
+    printf(ctx->compiled);
 }
 
-void addToCompiled (struct globalCtx ctx, const char *code) {
+void addToCompiled (struct globalCtx* ctx, const char *code) {
     printf(code);
-    strcat(ctx.compiled, code);
+    strcat(ctx->compiled, code);
 }
 
-void nextChar(struct globalCtx ctx)
+void nextChar(struct globalCtx* ctx)
 {
-    currentChar = ctx.input[pos++];
+    currentChar = ctx->input[pos++];
 }
 
 int isDigit(char c) {
@@ -34,7 +34,7 @@ int isDigit(char c) {
 }
 
 // Parse a number and emit a push instruction
-void parseNumber(struct globalCtx ctx) {
+void parseNumber(struct globalCtx* ctx) {
     int value = 0;
     while (isDigit(currentChar)) {
         value = value * 10 + (currentChar - '0');
@@ -48,7 +48,7 @@ void parseNumber(struct globalCtx ctx) {
 }
 
 
-void parseFactor(struct globalCtx ctx) {
+void parseFactor(struct globalCtx* ctx) {
     if (isDigit(currentChar)) {
         parseNumber(ctx);  // emits "push number"
     } else {
@@ -56,7 +56,7 @@ void parseFactor(struct globalCtx ctx) {
     }
 }
 
-void parseTerm(struct globalCtx ctx) {
+void parseTerm(struct globalCtx* ctx) {
     parseFactor(ctx);
     while (currentChar == '*' || currentChar == '/') {
         char operator = currentChar;
@@ -64,8 +64,8 @@ void parseTerm(struct globalCtx ctx) {
         parseFactor(ctx);
         addToCompiled(ctx,
             "\n"
-            "\tpop %%rbx\n"
-            "\tpop %%rax\n"
+            "\tpop %%rbx\t\t\t# right hand operand\n"
+            "\tpop %%rax\t\t\t# left hand operand\n"
         );
         if (operator == '*') {
             addToCompiled(ctx, "\timul %%rbx, %%rax\t\t# rax = rax * rbx\n");
@@ -79,7 +79,7 @@ void parseTerm(struct globalCtx ctx) {
     }
 }
 
-void parseExpression(struct globalCtx ctx) {
+void parseExpression(struct globalCtx* ctx) {
     parseTerm(ctx);
     while (currentChar == '+' || currentChar == '-') {
         char operator = currentChar;
@@ -88,7 +88,7 @@ void parseExpression(struct globalCtx ctx) {
         addToCompiled(ctx,
             "\n"
             "\tpop %%rbx\t\t\t# right hand operand\n"
-            "\tpop %%rax\t\t\t# left and operand\n"
+            "\tpop %%rax\t\t\t# left hand operand\n"
         );
         if (operator == '+') {
             addToCompiled(ctx, "\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
@@ -102,7 +102,7 @@ void parseExpression(struct globalCtx ctx) {
     }
 }
 
-void compileInput(struct globalCtx ctx) {
+void compileInput(struct globalCtx* ctx) {
     pos = 0;
 
     nextChar(ctx);
@@ -112,9 +112,9 @@ void compileInput(struct globalCtx ctx) {
     return;
 }
 
-int finalCode(struct globalCtx ctx) {
+int finalCode(struct globalCtx* ctx) {
     // Output top of stack to exit code
-    strcat(ctx.compiled,
+    strcat(ctx->compiled,
         "\n"
         "\t# Final code follows, this takes value from top of stack and places in exit code\n"
         "\t# Note only the 32 lowest bits of RAX will be used in exit code\n"
@@ -125,14 +125,14 @@ int finalCode(struct globalCtx ctx) {
 }
 
 
-void compiler(struct globalCtx ctx) {
+void compiler(struct globalCtx* ctx) {
     printf("\nOutput from compiler follows:\n\n");
 
     initialCode(ctx);
 
 
     addToCompiled(ctx, "\t# Evaluating: ");
-    addToCompiled(ctx, ctx.input);
+    addToCompiled(ctx, ctx->input);
     addToCompiled(ctx, "\n\n");
 
     // generate main code

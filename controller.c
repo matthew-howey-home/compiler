@@ -7,7 +7,7 @@ struct globalCtx {
 };
 
 // Declaration of the compiler function
-void compiler(struct globalCtx ctx);
+void compiler(struct globalCtx* ctx);
 
 int writeCompiledToFile (char* compiled) {
     FILE *file = fopen("compiled_assembly.s", "w");
@@ -36,7 +36,7 @@ int main() {
     printf("####################\n");
     printf("Running compiler\n");
     printf("####################\n");
-    compiler(ctx);
+    compiler(&ctx);
 
     writeCompiledToFile(ctx.compiled);
 
