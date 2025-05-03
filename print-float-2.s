@@ -7,12 +7,13 @@
 	.globl	main
 main:
 	subq	$40, %rsp
+
 	movsd	.LC0(%rip), %xmm0
 	movsd	%xmm0, -8(%rbp)
-	movsd	-8(%rbp), %xmm0
 	movq	-8(%rbp), %rdx
 	leaq	.LC1(%rip), %rcx
 	call	printf
+
 	movl	$0, %eax
 	addq	$40, %rsp
 	ret
