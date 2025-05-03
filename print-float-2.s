@@ -6,10 +6,7 @@
 	.text
 	.globl	main
 main:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$48, %rsp
-	call	__main
+	subq	$40, %rsp
 	movsd	.LC0(%rip), %xmm0
 	movsd	%xmm0, -8(%rbp)
 	movsd	-8(%rbp), %xmm0
@@ -20,8 +17,7 @@ main:
 	movq	%rax, %rcx
 	call	printf
 	movl	$0, %eax
-	addq	$48, %rsp
-	popq	%rbp
+	addq	$40, %rsp
 	ret
 
 	.section .rdata,"dr"
@@ -29,4 +25,3 @@ main:
 .LC0:
 	.long	0
 	.long	1075314688
-	
