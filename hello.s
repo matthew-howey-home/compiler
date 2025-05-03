@@ -19,4 +19,3 @@ main:
     movl $0, %eax
     popq %rbp
     ret
-    
