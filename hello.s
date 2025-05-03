@@ -15,7 +15,7 @@ main:
     leaq msg(%rip), %rcx      # Windows x64 ABI: RCX = first argument
     call printf
 
-    addq $32, %rsp            # restore stack
+    addq $40, %rsp            # restore stack
 
     movl $0, %eax
     ret
