@@ -19,4 +19,6 @@ Requirements:
 - GCC toolchain downloaded e.g. using MSys2
 - gcc must be available in the PATH of the Windows device
 
+To run:
 
+Just execute the run-controller.bat file, this will run the controller and the compiler, output to assembly files and test the output.
