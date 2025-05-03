@@ -1,6 +1,6 @@
-# Simple hello world
-# To compile, enter: gcc hello.s -o hello.exe -lmsvcrt
-# To run, enter: ./hello.exe
+# Simple printf of int
+# To compile, enter: gcc print-int.s -o print-int.exe -lmsvcrt
+# To run, enter: ./print-int.exe
 
 .section .data
 msg:
