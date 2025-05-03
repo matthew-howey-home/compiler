@@ -1,3 +1,7 @@
+# Simple hello world
+# To compile, enter: gcc hello.s -o hello.exe -lmsvcrt
+# To run, enter: ./hello.exe
+
 .section .data
 msg:
     .string "Hello, World!\n"
