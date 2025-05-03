@@ -10,10 +10,7 @@ msg:
 .extern printf
 .globl main
 main:
-    pushq %rbp
-    movq %rsp, %rbp
-
-    subq $32, %rsp            # align stack to 16 bytes
+    subq $40, %rsp            # save 32 shadow space + 8 for 64bit alignment
 
     leaq msg(%rip), %rcx      # Windows x64 ABI: RCX = first argument
     call printf
@@ -21,5 +18,4 @@ main:
     addq $32, %rsp            # restore stack
 
     movl $0, %eax
-    popq %rbp
     ret
