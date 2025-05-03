@@ -8,7 +8,7 @@
 main:
 	subq	$40, %rsp
 
-	movsd	.LC0(%rip), %xmm0
+	movsd	.LC01(%rip), %xmm0
 	movsd	%xmm0, -8(%rbp)
 	movq	-8(%rbp), %rdx
 	leaq	.LC1(%rip), %rcx
@@ -20,6 +20,5 @@ main:
 
 	.section .rdata,"dr"
 	.align 8
-.LC0:
-	.long	0
-	.long	1075314688
+.LC01:
+    .double 3.1452
