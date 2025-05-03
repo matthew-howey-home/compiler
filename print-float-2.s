@@ -10,11 +10,8 @@ main:
 	movsd	.LC0(%rip), %xmm0
 	movsd	%xmm0, -8(%rbp)
 	movsd	-8(%rbp), %xmm0
-	movq	-8(%rbp), %rax
-	movapd	%xmm0, %xmm1
-	movq	%rax, %rdx
-	leaq	.LC1(%rip), %rax
-	movq	%rax, %rcx
+	movq	-8(%rbp), %rdx
+	leaq	.LC1(%rip), %rcx
 	call	printf
 	movl	$0, %eax
 	addq	$40, %rsp
