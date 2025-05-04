@@ -6,7 +6,11 @@
 	.text
 	.globl	main
 main:
-	subq	$40, %rsp
+	pushq	%rbp 		# save caller's base pointer
+	movq 	%rsp, %rbp 	# store stack pointer in current base pointer
+	subq	$32, %rsp	# save 32 shadow space
+                        # 32 bytes + 8 bytes from push base point + 8 bytes from call printf 
+                        # which is divisible by 16, and complies with 16 byte boundary  
 
 	movsd	.LC01(%rip), %xmm0
 	movsd	%xmm0, -8(%rbp)
@@ -14,8 +18,9 @@ main:
 	leaq	.LC1(%rip), %rcx
 	call	printf
 
-	movl	$0, %eax
-	addq	$40, %rsp
+	movl	$0, %eax	# exit code
+	addq	$32, %rsp	# restore stack
+	popq	%rbp		# restore caller's base pointer
 	ret
 
 	.section .rdata,"dr"
