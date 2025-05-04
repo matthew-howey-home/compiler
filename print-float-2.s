@@ -1,8 +1,11 @@
-	.file	"print-float-2.c"
-	.text
-	.section .rdata,"dr"
-.LC1:
-	.ascii "Value: %f\12\0"
+
+.section .data
+
+msg:
+	.string "The number is %f!"
+value:
+	.double 3.1452
+
 	.text
 	.globl	main
 main:
@@ -12,18 +15,15 @@ main:
                         # 32 bytes + 8 bytes from push base point + 8 bytes from call printf 
                         # which is divisible by 16, and complies with 16 byte boundary  
 
-	movsd	.LC01(%rip), %xmm0
-	movsd	%xmm0, -8(%rbp)
-	movq	-8(%rbp), %rdx
-	leaq	.LC1(%rip), %rcx
+	movsd	value(%rip), %xmm0 	# load value into float register
+	movsd	%xmm0, -8(%rbp)		# load float register into memory
+
+	leaq	msg(%rip), %rcx		# first arg for printf
+	movq	-8(%rbp), %rdx		# second arg for printf
+
 	call	printf
 
 	movl	$0, %eax	# exit code
 	addq	$32, %rsp	# restore stack
 	popq	%rbp		# restore caller's base pointer
 	ret
-
-	.section .rdata,"dr"
-	.align 8
-.LC01:
-    .double 3.1452
