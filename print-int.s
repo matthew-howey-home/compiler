@@ -11,6 +11,8 @@ msg:
 .globl main
 main:
     subq $40, %rsp            # save 32 shadow space + 8 for 64bit alignment
+                              # 40 bytes + 8 bytes from printf = 48
+                              # which is divisible by 16, and complies with 16 byte boundary  
 
     leaq msg(%rip), %rcx      # Windows x64 ABI: RCX = first argument
     movl $53, %edx            # load int32 53 = second argument 
