@@ -11,8 +11,9 @@ value:
 main:
 	pushq	%rbp 		# save caller's base pointer
 	movq 	%rsp, %rbp 	# store stack pointer in current base pointer
-	subq	$32, %rsp	# save 32 shadow space
-                        # 32 bytes + 8 bytes from push base point + 8 bytes from call printf 
+	subq	$48, %rsp	# save 32 shadow space for printf, + 8 bytes for local float variable + 8 bytes alignment padding = 48
+                        # Alignment notes: 
+						# 48 bytes + 8 bytes from push base point + 8 bytes from call printf = 64 
                         # which is divisible by 16, and complies with 16 byte boundary  
 
 	movsd	value(%rip), %xmm0 	# load value into float register
@@ -24,6 +25,6 @@ main:
 	call	printf
 
 	movl	$0, %eax	# exit code
-	addq	$32, %rsp	# restore stack
+	addq	$48, %rsp	# restore stack
 	popq	%rbp		# restore caller's base pointer
 	ret
