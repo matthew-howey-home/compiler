@@ -1,3 +1,7 @@
+# Simple printf of float using float literal (actual float value in data)
+# To compile, enter: gcc print-float-2.s -o print-float-2.exe -lmsvcrt
+# To run, enter: ./print-float-2.exe
+
 
 .section .data
 
