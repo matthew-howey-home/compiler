@@ -160,8 +160,8 @@ void finalCode() {
 char* compiler(char* input) {
     // printf("\nOutput from compiler follows:\n\n");
 
-    ctx.compiled = malloc(2000);
-    ctx.datasection = malloc(1000);
+    ctx.compiled = malloc(5000);
+    ctx.datasection = malloc(5000);
     ctx.input = input;
     initialCode();
 
@@ -174,7 +174,7 @@ char* compiler(char* input) {
 
     finalCode();
 
-    char* output = malloc(2000);
+    char* output = malloc(5000);
 
     strcpy(output, ctx.datasection);
     strcat(output, "\n");
