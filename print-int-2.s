@@ -4,7 +4,7 @@
 
 .section .data
 msg:
-    .string "The number is %d!\n"
+    .string "%d"
 buffer:
     .space 200
 
@@ -27,25 +27,25 @@ main:
     movq $53, %r8            # load int64 53 into third arg
     call sprintf
 
-    leaq buffer(%rip), %rcx # load buffer into first arg
-    call printf
-
-######################## Write to file sample code - as next step this needs to write the buffer to the file
+######################## Write to file sample code - outputs buffer to file
 
     leaq file_name(%rip), %rcx   # load filename into first arg
     leaq method(%rip), %rdx     # load method w (write) into second arg
     call fopen
     movq %rax, %r12              # save FILE* returned by fopen
 
-    leaq file_content(%rip), %rcx      # first arg - pointer to file content
+    # compute length of string in buffer
+    leaq buffer(%rip), %rcx   # first arg to strlen: pointer to buffer
+    call strlen               # returns length in RAX
+
+    leaq buffer(%rip), %rcx      # first arg - pointer to file content
     movq $1, %rdx                # second arg - size
-    movq $5, %r8                # third arg - count (total size of file is size * count)
+    movq %rax, %r8                # third arg - count (output from strlen) (total size of file is size * count)
     movq %r12, %r9               # FILE*
     call fwrite
 
     movq %r12, %rcx             # load file reference into first arg
     call fclose
-
 
 ######################## end write to file sample code
 
