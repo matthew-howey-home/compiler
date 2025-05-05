@@ -7,30 +7,32 @@ struct globalCtx {
     char* compiled;
 };
 
+struct globalCtx ctx;
+
 char currentChar;
 int pos;
 
-void initialCode(struct globalCtx* ctx) {
-    strcpy(ctx->compiled,
+void initialCode() {
+    strcpy(ctx.compiled,
         ".section .text\n"
         ".global main\n\n"
         "main:\n"
     );
 }
 
-void addToCompiled (struct globalCtx* ctx, const char *code) {
+void addToCompiled (const char *code) {
     // printf(code);
-    strcat(ctx->compiled, code);
+    strcat(ctx.compiled, code);
 }
 
-void nextChar(struct globalCtx* ctx)
+void nextChar()
 {
-    currentChar = ctx->input[pos++];
+    currentChar = ctx.input[pos++];
 }
 
-void skipWhitespace(struct globalCtx* ctx) {
+void skipWhitespace() {
     while(currentChar == ' ') {
-        nextChar(ctx);
+        nextChar();
     }    
 }
 
@@ -39,92 +41,92 @@ int isDigit(char c) {
 }
 
 // Parse a number and emit a push instruction
-void parseNumber(struct globalCtx* ctx) {
+void parseNumber() {
     int value = 0;
     while (isDigit(currentChar)) {
         value = value * 10 + (currentChar - '0');
-        nextChar(ctx);
+        nextChar();
     }
 
     char* buffer = malloc(20);
     sprintf(buffer, "\tpush $%d\n", value);
-    addToCompiled(ctx, buffer);
+    addToCompiled(buffer);
     free(buffer);
 }
 
 
-void parseFactor(struct globalCtx* ctx) {
-    skipWhitespace(ctx);
+void parseFactor() {
+    skipWhitespace();
     if (isDigit(currentChar)) {
-        parseNumber(ctx);  // emits "push number"
+        parseNumber();  // emits "push number"
     } else {
         // You could add support for parentheses here later if you want!
     }
 }
 
-void parseTerm(struct globalCtx* ctx) {
-    parseFactor(ctx);
+void parseTerm() {
+    parseFactor();
 
-    skipWhitespace(ctx);
+    skipWhitespace();
     while (currentChar == '*' || currentChar == '/') {
         char operator = currentChar;
-        nextChar(ctx);
-        parseFactor(ctx);
-        addToCompiled(ctx,
+        nextChar();
+        parseFactor();
+        addToCompiled(
             "\n"
             "\tpop %%rbx\t\t\t# right hand operand\n"
             "\tpop %%rax\t\t\t# left hand operand\n"
         );
         if (operator == '*') {
-            addToCompiled(ctx, "\timul %%rbx, %%rax\t\t# rax = rax * rbx\n");
+            addToCompiled("\timul %%rbx, %%rax\t\t# rax = rax * rbx\n");
         } else {
-            addToCompiled(ctx,
+            addToCompiled(
                 "\tcqo\t\t\t\t# convert quad rax to oct rdx:rax\n"
                 "\tidiv %%rbx\t\t# rax = rdx:rax / rbx\n"
             );
         }
-        addToCompiled(ctx, "\tpush %%rax\n\n");
+        addToCompiled("\tpush %%rax\n\n");
     }
 }
 
-void parseExpression(struct globalCtx* ctx) {
-    parseTerm(ctx);
+void parseExpression() {
+    parseTerm();
 
-    skipWhitespace(ctx);
+    skipWhitespace();
     while (currentChar == '+' || currentChar == '-') {
         char operator = currentChar;
-        nextChar(ctx);
-        parseTerm(ctx);
-        addToCompiled(ctx,
+        nextChar();
+        parseTerm();
+        addToCompiled(
             "\n"
             "\tpop %%rbx\t\t\t# right hand operand\n"
             "\tpop %%rax\t\t\t# left hand operand\n"
         );
         if (operator == '+') {
-            addToCompiled(ctx, "\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
+            addToCompiled("\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
         } else {
             // sub %rbx, %rax	rax = rax - rbx
-            addToCompiled(ctx, "\tsub %%rbx, %%rax\t\t# rax = rax - rbx\n");
+            addToCompiled("\tsub %%rbx, %%rax\t\t# rax = rax - rbx\n");
         }
-        addToCompiled(ctx,
+        addToCompiled(
             "\tpush %%rax\n\n"
         );
     }
 }
 
-void compileInput(struct globalCtx* ctx) {
+void compileInput() {
     pos = 0;
 
-    nextChar(ctx);
+    nextChar();
 
-    parseExpression(ctx);
+    parseExpression();
 
     return;
 }
 
-int finalCode(struct globalCtx* ctx) {
+int finalCode() {
     // Output top of stack to exit code
-    strcat(ctx->compiled,
+    strcat(ctx.compiled,
         "\n"
         "\t# Final code follows, this takes value from top of stack and places in exit code\n"
         "\t# Note only the 32 lowest bits of RAX will be used in exit code\n"
@@ -135,18 +137,21 @@ int finalCode(struct globalCtx* ctx) {
 }
 
 
-void compiler(struct globalCtx* ctx) {
+char* compiler(char* input) {
     // printf("\nOutput from compiler follows:\n\n");
 
-    initialCode(ctx);
+    ctx.compiled = malloc(1000);
+    ctx.input = input;
+    initialCode();
 
-
-    addToCompiled(ctx, "\t# Evaluating: ");
-    addToCompiled(ctx, ctx->input);
-    addToCompiled(ctx, "\n\n");
+    addToCompiled("\t# Evaluating: ");
+    addToCompiled(ctx.input);
+    addToCompiled("\n\n");
 
     // generate main code
-    compileInput(ctx);
+    compileInput();
 
-    finalCode(ctx);
+    finalCode();
+
+    return ctx.compiled;
 }

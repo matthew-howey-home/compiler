@@ -2,15 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct globalCtx {
-    char* input;
-    char* compiled;
-};
-
-struct globalCtx ctx;
-
 // Declaration of the compiler function
-void compiler(struct globalCtx* ctx);
+char* compiler(char* input);
 
 int writeCompiledToFile (char* compiled, int fileIndex) {
     char* filename = malloc(20);
@@ -30,12 +23,10 @@ int writeCompiledToFile (char* compiled, int fileIndex) {
 
 void testCompiler(char* input, int expectedResult, int fileIndex) {
     int result;
-    ctx.input = malloc(100);
-    strcpy(ctx.input, input);
 
-    compiler(&ctx);
+    char* compiled = compiler(input);
 
-    writeCompiledToFile(ctx.compiled, fileIndex);
+    writeCompiledToFile(compiled, fileIndex);
 
     // Assemble compiled assembly
     char* buffer = malloc(100);
@@ -56,8 +47,6 @@ void testCompiler(char* input, int expectedResult, int fileIndex) {
 }
 
 int main() {
-    ctx.compiled = malloc(1000);
-
     testCompiler("11+5", 16, 1);
     testCompiler("10/5+3*2*3-11", 9, 2);
     testCompiler("10/5+3*2-11+5", 2, 3);
