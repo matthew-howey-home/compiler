@@ -6,7 +6,14 @@
 msg:
     .string "The number is %d!\n"
 buffer:
-    .string
+    .space 200
+
+file_name:
+    .string "output.txt"
+method:
+    .string "w"
+file_content:
+    .string "Hello"
 
 .section .text
 .globl main
@@ -22,6 +29,25 @@ main:
 
     leaq buffer(%rip), %rcx # load buffer into first arg
     call printf
+
+######################## Write to file sample code - as next step this needs to write the buffer to the file
+
+    leaq file_name(%rip), %rcx   # load filename into first arg
+    leaq method(%rip), %rdx     # load method w (write) into second arg
+    call fopen
+    movq %rax, %r12              # save FILE* returned by fopen
+
+    leaq file_content(%rip), %rcx      # first arg - pointer to file content
+    movq $1, %rdx                # second arg - size
+    movq $5, %r8                # third arg - count (total size of file is size * count)
+    movq %r12, %r9               # FILE*
+    call fwrite
+
+    movq %r12, %rcx             # load file reference into first arg
+    call fclose
+
+
+######################## end write to file sample code
 
     addq $40, %rsp            # restore stack
 
