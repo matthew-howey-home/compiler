@@ -144,28 +144,23 @@ char* loadFile(char* filename) {
     return output;
 }
 
-int finalCode() {
+void finalCode() {
     char* datasection = loadFile("fragment-sectiondata-int-out.s");
-   
     addToDataSection(datasection);
     free(datasection);
+    datasection = NULL;
 
-    // Output top of stack to exit code
-    strcat(ctx.compiled,
-        "\n"
-        "\t# Final code follows, this takes value from top of stack and places in exit code\n"
-        "\t# Note only the 32 lowest bits of RAX will be used in exit code\n"
-        "\n"
-        "\tpop %%rax\n"
-        "\tret\t# Return from main\n"
-    );
+    char* mainIntout = loadFile("fragment-main-int-out.s");
+    addToCompiled(mainIntout);
+    free(mainIntout);
+    mainIntout = NULL; 
 }
 
 
 char* compiler(char* input) {
     // printf("\nOutput from compiler follows:\n\n");
 
-    ctx.compiled = malloc(1000);
+    ctx.compiled = malloc(2000);
     ctx.datasection = malloc(1000);
     ctx.input = input;
     initialCode();

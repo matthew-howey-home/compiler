@@ -1,5 +1,5 @@
 msg:
-    .string "%d"
+    .string "%%d"
 buffer:
     .space 200
 
