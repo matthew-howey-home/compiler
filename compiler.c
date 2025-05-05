@@ -5,6 +5,7 @@
 struct globalCtx {
     char* input;
     char* compiled;
+    char* datasection;
 };
 
 struct globalCtx ctx;
@@ -18,11 +19,17 @@ void initialCode() {
         ".global main\n\n"
         "main:\n"
     );
+    strcpy(ctx.datasection,
+        ".section .data\n"
+    );
 }
 
 void addToCompiled (const char *code) {
-    // printf(code);
     strcat(ctx.compiled, code);
+}
+
+void addToDataSection(const char* code) {
+    strcat(ctx.datasection, code);
 }
 
 void nextChar()
@@ -125,6 +132,18 @@ void compileInput() {
 }
 
 int finalCode() {
+    FILE* datasectionFile = fopen("fragment-sectiondata-int-out.s", "r");
+    fseek(datasectionFile, 0, SEEK_END);
+    long file_size = ftell(datasectionFile);
+    char* datasection = malloc(file_size + 1);
+    rewind(datasectionFile);
+    size_t  bytesRead = fread(datasection, 1, file_size, datasectionFile);
+    datasection[bytesRead] = '\0'; // null-terminate the string
+    fclose(datasectionFile);
+
+    addToDataSection(datasection);
+    free(datasection);
+
     // Output top of stack to exit code
     strcat(ctx.compiled,
         "\n"
@@ -141,6 +160,7 @@ char* compiler(char* input) {
     // printf("\nOutput from compiler follows:\n\n");
 
     ctx.compiled = malloc(1000);
+    ctx.datasection = malloc(1000);
     ctx.input = input;
     initialCode();
 
@@ -153,5 +173,11 @@ char* compiler(char* input) {
 
     finalCode();
 
-    return ctx.compiled;
+    char* output = malloc(2000);
+
+    strcpy(output, ctx.datasection);
+    strcat(output, "\n");
+    strcat(output, ctx.compiled);
+
+    return output;
 }
