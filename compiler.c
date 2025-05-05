@@ -131,16 +131,22 @@ void compileInput() {
     return;
 }
 
-int finalCode() {
-    FILE* datasectionFile = fopen("fragment-sectiondata-int-out.s", "r");
-    fseek(datasectionFile, 0, SEEK_END);
-    long file_size = ftell(datasectionFile);
-    char* datasection = malloc(file_size + 1);
-    rewind(datasectionFile);
-    size_t  bytesRead = fread(datasection, 1, file_size, datasectionFile);
-    datasection[bytesRead] = '\0'; // null-terminate the string
-    fclose(datasectionFile);
+char* loadFile(char* filename) {
+    FILE* file = fopen(filename, "r");
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    char* output = malloc(fileSize + 1);
+    rewind(file);
+    size_t  bytesRead = fread(output, 1, fileSize, file);
+    output[bytesRead] = '\0'; // null-terminate the string
+    fclose(file);
 
+    return output;
+}
+
+int finalCode() {
+    char* datasection = loadFile("fragment-sectiondata-int-out.s");
+   
     addToDataSection(datasection);
     free(datasection);
 
