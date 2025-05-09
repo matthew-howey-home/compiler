@@ -13,6 +13,10 @@ struct globalCtx ctx;
 char currentChar;
 int pos;
 
+enum DataType {
+    INT, FLOAT
+};
+
 void initialCode() {
     strcpy(ctx.compiled,
         ".section .text\n"
@@ -47,21 +51,30 @@ int isDigit(char c) {
     return c >= '0' && c <= '9';
 }
 
+void pushInt(char* numberAsString) {
+    char* buffer = malloc(30);
+    sprintf(buffer, "\tpush $%s\n", numberAsString);
+    addToCompiled(buffer);
+    free(buffer);
+}
+
 // Parse a number and emit a push instruction
 void parseNumber() {
+    enum DataType dataType = INT;
+ 
     char* numberAsString = malloc(20);
     int numberAsStringPos = 0;
-    while (isDigit(currentChar)) {
+    while (isDigit(currentChar) || currentChar == '.') {
         numberAsString[numberAsStringPos++] = currentChar;
+        if (currentChar == '.') { dataType = FLOAT; }
         nextChar();
     }
     numberAsString[numberAsStringPos] = '\0';
 
-    char* buffer = malloc(30);
-    sprintf(buffer, "\tpush $%s\n", numberAsString);
-    addToCompiled(buffer);
+    if (dataType == INT) {
+        pushInt(numberAsString);
+    }
     free(numberAsString);
-    free(buffer);
 }
 
 void parseExpression();
