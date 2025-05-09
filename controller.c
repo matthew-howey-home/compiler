@@ -64,11 +64,12 @@ int main() {
     testCompiler("11+5", 16, 1);
     testCompiler("10/5+3*2*3-11", 9, 2);
     testCompiler("10/5+3*2-11+5", 2, 3);
-    testCompiler("10 / 5 +3*  2-11 + 5", 3, 4);
+    testCompiler("10 / 5 +3*  2-11 + 5", 2, 4);
     testCompiler(" 1 + 4 ", 5, 5);
     testCompiler("2*(3+8)", 22, 6);
     testCompiler(" 2 * (11 - 2 ) ", 18, 7);
     // testCompiler("2.0", 2.0, 8);
+    testCompiler("23647", 23647, 9);
    
     return 0;
 }
