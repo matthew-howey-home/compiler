@@ -21,6 +21,17 @@ int writeCompiledToFile (char* compiled, int fileIndex) {
     free(filename);
 }
 
+char* getOutputFromFile() {
+    FILE* file = fopen("output.txt", "r");
+    char* buffer = malloc(100);
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    rewind(file);
+    fread(buffer, 1, file_size, file);
+    buffer[file_size] = '\0';
+    return buffer;
+}
+
 void testCompiler(char* input, int expectedResult, int fileIndex) {
     char* compiled = compiler(input);
 
@@ -35,15 +46,10 @@ void testCompiler(char* input, int expectedResult, int fileIndex) {
     // Run assembled machine code
     system("assembled_machine_code.exe");
 
-    FILE* file = fopen("output.txt", "r");
-    buffer = malloc(100);
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    rewind(file);
-    fread(buffer, 1, file_size, file);
-    buffer[file_size] = '\0';
+    char* output = getOutputFromFile();
+
     char *endptr;
-    int result = strtol(buffer, &endptr, 10);  // base 10
+    int result = strtol(output, &endptr, 10);  // base 10
 
     printf("Output from running assembled machine code: %s\n\n", buffer);
 
