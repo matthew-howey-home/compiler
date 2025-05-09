@@ -56,7 +56,7 @@ void testCompiler(char* input, int expectedResult, int fileIndex) {
     if (result == expectedResult) {
         printf("Test Passed!\n");
     } else {
-        printf("Test failed, expected result %d, actual result %d\n", expectedResult, result);
+        printf("****************OH NO*********!!!!! Test failed,\n expected result %d, actual result %d\n", expectedResult, result);
     }
 }
 
@@ -64,7 +64,7 @@ int main() {
     testCompiler("11+5", 16, 1);
     testCompiler("10/5+3*2*3-11", 9, 2);
     testCompiler("10/5+3*2-11+5", 2, 3);
-    testCompiler("10 / 5 +3*  2-11 + 5", 2, 4);
+    testCompiler("10 / 5 +3*  2-11 + 5", 3, 4);
     testCompiler(" 1 + 4 ", 5, 5);
     testCompiler("2*(3+8)", 22, 6);
     testCompiler(" 2 * (11 - 2 ) ", 18, 7);

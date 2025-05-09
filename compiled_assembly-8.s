@@ -20,6 +20,9 @@ method:
 main:
 	# Evaluating: 2.0
 
+	sub $8, %rsp		# Make space on stack for 8 bytes
+	movsd float_var_0(%rip), %xmm0
+	movsd %xmm0, (%rsp)		# Store 8 bytes (double) on stack
 ######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (main code)
     popq %rax              # save result from evaluation to rax
 

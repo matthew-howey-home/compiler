@@ -54,17 +54,25 @@ int isDigit(char c) {
 }
 
 void pushInt(char* numberAsString) {
-    char* buffer = malloc(30);
+    char* buffer = malloc(100);
     sprintf(buffer, "\tpush $%s\n", numberAsString);
     addToCompiled(buffer);
     free(buffer);
 }
 
 void pushFloat(char* numberAsString) {
-    char* buffer = malloc(30);
-    sprintf(buffer, "float_var_%d: .float %s\n", floatIndex++, numberAsString);
+    char* buffer = malloc(100);
+    sprintf(buffer, "float_var_%d: .float %s\n", floatIndex, numberAsString);
     addToDataSection(buffer);
+
+    addToCompiled("\tsub $8, %%rsp\t\t# Make space on stack for 8 bytes\n");
+    buffer = malloc(100);
+    sprintf(buffer, "\tmovsd float_var_%d(%%%%rip), %%%%xmm0\n", floatIndex);
+    addToCompiled(buffer);
+    addToCompiled("\tmovsd %%xmm0, (%%rsp)\t\t# Store 8 bytes (double) on stack\n");
+
     free(buffer);
+    floatIndex++;
 }
 
 // Parse a number and emit a push instruction

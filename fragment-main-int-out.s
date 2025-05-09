@@ -1,4 +1,4 @@
-######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (main code)
+######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %%rax              # save result from evaluation to rax
 
     subq $40, %%rsp            # save 32 shadow space + 8 for 64bit alignment
