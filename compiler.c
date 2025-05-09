@@ -13,6 +13,8 @@ struct globalCtx ctx;
 char currentChar;
 int pos;
 
+int floatIndex = 0;
+
 enum DataType {
     INT, FLOAT
 };
@@ -24,7 +26,7 @@ void initialCode() {
         "main:\n"
     );
     strcpy(ctx.datasection,
-        ".section .data\n"
+        ".section .data\n\n"
     );
 }
 
@@ -58,6 +60,13 @@ void pushInt(char* numberAsString) {
     free(buffer);
 }
 
+void pushFloat(char* numberAsString) {
+    char* buffer = malloc(30);
+    sprintf(buffer, "float_var_%d: .float %s\n", floatIndex++, numberAsString);
+    addToDataSection(buffer);
+    free(buffer);
+}
+
 // Parse a number and emit a push instruction
 void parseNumber() {
     enum DataType dataType = INT;
@@ -73,6 +82,8 @@ void parseNumber() {
 
     if (dataType == INT) {
         pushInt(numberAsString);
+    } else if (dataType == FLOAT) {
+        pushFloat(numberAsString);
     }
     free(numberAsString);
 }

@@ -68,6 +68,7 @@ int main() {
     testCompiler(" 1 + 4 ", 5, 5);
     testCompiler("2*(3+8)", 22, 6);
     testCompiler(" 2 * (11 - 2 ) ", 18, 7);
+    // testCompiler("2.0", 2.0, 8);
    
     return 0;
 }

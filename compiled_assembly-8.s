@@ -1,5 +1,6 @@
 .section .data
 
+float_var_0: .float 2.0
 
 ######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (data section)
 number_format:
@@ -17,22 +18,7 @@ method:
 .global main
 
 main:
-	# Evaluating:  2 * (11 - 2 ) 
-
-	push $2
-	push $11
-	push $2
-
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
-	sub %rbx, %rax		# rax = rax - rbx
-	push %rax
-
-
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
-	imul %rbx, %rax		# rax = rax * rbx
-	push %rax
+	# Evaluating: 2.0
 
 ######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (main code)
     popq %rax              # save result from evaluation to rax
