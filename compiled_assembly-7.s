@@ -14,7 +14,7 @@ method:
 .global main
 
 main:
-	# Evaluating: 2 * (11 - 2 )
+	# Evaluating:  2 * (11 - 2 ) 
 
 	push $2
 	push $11
