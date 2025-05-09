@@ -49,15 +49,18 @@ int isDigit(char c) {
 
 // Parse a number and emit a push instruction
 void parseNumber() {
-    int value = 0;
+    char* numberAsString = malloc(20);
+    int numberAsStringPos = 0;
     while (isDigit(currentChar)) {
-        value = value * 10 + (currentChar - '0');
+        numberAsString[numberAsStringPos++] = currentChar;
         nextChar();
     }
+    numberAsString[numberAsStringPos] = '\0';
 
-    char* buffer = malloc(20);
-    sprintf(buffer, "\tpush $%d\n", value);
+    char* buffer = malloc(30);
+    sprintf(buffer, "\tpush $%s\n", numberAsString);
     addToCompiled(buffer);
+    free(numberAsString);
     free(buffer);
 }
 
