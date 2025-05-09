@@ -61,13 +61,26 @@ void parseNumber() {
     free(buffer);
 }
 
+void parseExpression();
+
+void parseFactorInBrackets() {
+    nextChar();
+    parseExpression();
+    skipWhitespace();
+    if (currentChar == ')') {
+        nextChar();
+    } else {
+        printf("Error: expected )");
+        exit(1);
+    }
+}
 
 void parseFactor() {
     skipWhitespace();
     if (isDigit(currentChar)) {
         parseNumber();  // emits "push number"
-    } else {
-        // You could add support for parentheses here later if you want!
+    } else if (currentChar == '(') {
+        parseFactorInBrackets();
     }
 }
 
