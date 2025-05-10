@@ -213,7 +213,9 @@ enum DataType parseExpression() {
                 "\tsub $8, %%rsp\t\t\t\t\t# Make space on stack for 8 bytes\n"
                 "\tmovsd %%xmm0, (%%rsp)\t\t\t\t# Store 8 bytes (double) on stack\n\n"
             );
+            leftOperandDataType = dataType;
         }
+
     }
     return dataType;
 }

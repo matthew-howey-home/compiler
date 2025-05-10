@@ -1,8 +1,6 @@
 .section .data
 
-float_var_3: .double 2.0
-float_var_4: .double 1.0
-float_var_5: .double 3.0
+float_var_7: .double 2.0
 
 ######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (data section)
 number_format:
@@ -20,35 +18,29 @@ method:
 .global main
 
 main:
-	# Evaluating: 2.0+1.0+3.0
+	# Evaluating: 1+2.0+3
 
+	push $1
 	sub $8, %rsp					# Make space on stack for 8 bytes
-	movsd float_var_3(%rip), %xmm0
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
-
-	sub $8, %rsp					# Make space on stack for 8 bytes
-	movsd float_var_4(%rip), %xmm0
+	movsd float_var_7(%rip), %xmm0
 	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
 
 
 	movsd (%rsp), %xmm1		# Load 8-byte float from the top of the stack into xmm1
 	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
 
-	movsd (%rsp), %xmm0		# Load 8-byte float from the top of the stack into xmm0
-	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+	pop %rax
+	cvtsi2sd %rax, %xmm0		#Convert int to float
 
 	addsd %xmm1, %xmm0		# xmm0 += xmm1
 
 	sub $8, %rsp					# Make space on stack for 8 bytes
 	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
 
-	sub $8, %rsp					# Make space on stack for 8 bytes
-	movsd float_var_5(%rip), %xmm0
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
+	push $3
 
-
-	movsd (%rsp), %xmm1		# Load 8-byte float from the top of the stack into xmm1
-	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+	pop %rax
+	cvtsi2sd %rax, %xmm1		#Convert int to float
 
 	movsd (%rsp), %xmm0		# Load 8-byte float from the top of the stack into xmm0
 	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
