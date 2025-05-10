@@ -5,6 +5,8 @@
 // Declaration of the compiler function
 char* compiler(char* input);
 
+int failedTests = 0;
+
 int writeCompiledToFile (char* compiled, int fileIndex) {
     char* filename = malloc(20);
     sprintf(filename, "compiled_assembly-%d.s", fileIndex);
@@ -47,16 +49,17 @@ void testCompiler(char* input, int expectedResult, int fileIndex) {
     system("assembled_machine_code.exe");
 
     char* output = getOutputFromFile();
+    printf("Output from running assembled machine code: %s\n\n", output);
 
     char *endptr;
     int result = strtol(output, &endptr, 10);  // base 10
-
-    printf("Output from running assembled machine code: %s\n\n", buffer);
+    free(output);
 
     if (result == expectedResult) {
         printf("Test Passed!\n");
     } else {
         printf("****************OH NO*********!!!!! Test failed,\n expected result %d, actual result %d\n", expectedResult, result);
+        failedTests++;
     }
 }
 
@@ -70,6 +73,12 @@ int main() {
     testCompiler(" 2 * (11 - 2 ) ", 18, 7);
     // testCompiler("2.0", 2.0, 8);
     testCompiler("23647", 23647, 9);
+
+    if (failedTests > 0) {
+        printf("\n****************OH NO*********!!!!! %d test(s) failed!\n", failedTests);
+    } else {
+        printf("\nAwesome! All tests passed!\n");
+    }
    
     return 0;
 }
