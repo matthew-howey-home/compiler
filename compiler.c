@@ -212,7 +212,7 @@ void finalCode(enum DataType dataType) {
     datasection = NULL;
 
     char* main;
-    main = loadFile("fragment-main-int-out.s");
+    main = loadFile("fragment-main-out.s");
     
     addToCompiled(main);
     free(main);
