@@ -151,39 +151,77 @@ enum DataType parseTerm() {
 }
 
 enum DataType parseExpression() {
-    enum DataType dataType;
-    dataType = parseTerm();
+    enum DataType leftOperandDataType = parseTerm();
+    enum DataType dataType = leftOperandDataType;
 
     skipWhitespace();
     while (currentChar == '+' || currentChar == '-') {
         char operator = currentChar;
         nextChar();
-        parseTerm();
+        enum DataType rightOperandDataType = parseTerm();
+
+        if (leftOperandDataType == FLOAT || rightOperandDataType == FLOAT) {
+            dataType = FLOAT;
+        }
+
         if (dataType == INT) {
             addToCompiled(
                 "\n"
                 "\tpop %%rbx\t\t\t# right hand operand\n"
                 "\tpop %%rax\t\t\t# left hand operand\n"
             );
-        } else if (dataType == FLOAT) {
+        }
+        if (dataType == FLOAT && rightOperandDataType == FLOAT) {
             addToCompiled(
                 "\n"
-                "\t%%xmm0, (%%rsp)\t\t# Load 8-byte float from the top of the stack into xmm0\n"
+                "\tmovsd (%%rsp), %%xmm1\t\t# Load 8-byte float from the top of the stack into xmm1\n"
                 "\tadd $8, %%rsp\t\t# Adjust the stack pointer (pop 8 bytes)\n"
-                "\t%%xmm1, (%%rsp)\t\t# Load 8-byte float from the top of the stack into xmm1\n"
-                "\tadd $8, %%rsp\t\t# Adjust the stack pointer (pop 8 bytes)\n\n"
+            );
+        }
+        if (dataType == FLOAT && rightOperandDataType == INT) {
+            addToCompiled(
+                "\n"
+                "\tpop %%rax\n"
+                "\tcvtsi2sd %%rax, %%xmm1\t\t#Convert int to float\n"
+            );
+        }
+        if (dataType == FLOAT && leftOperandDataType == FLOAT) {
+            addToCompiled(
+                "\n"
+                "\tmovsd (%%rsp), %%xmm0\t\t# Load 8-byte float from the top of the stack into xmm0\n"
+                "\tadd $8, %%rsp\t\t# Adjust the stack pointer (pop 8 bytes)\n"
+            );
+        }
+        if (dataType == FLOAT && rightOperandDataType == INT) {
+            addToCompiled(
+                "\n"
+                "\tpop %%rax\n"
+                "\tcvtsi2sd %%rax, %%xmm0\t\t#Convert int to float\n"
             );
         }
 
-        if (operator == '+') {
-            addToCompiled("\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
-        } else {
-            // sub %rbx, %rax	rax = rax - rbx
-            addToCompiled("\tsub %%rbx, %%rax\t\t# rax = rax - rbx\n");
+        if (operator == '+' && dataType == INT) {
+            addToCompiled("\n\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
         }
-        addToCompiled(
-            "\tpush %%rax\n\n"
-        );
+        if (operator == '+' && dataType == FLOAT) {
+            addToCompiled("\n\taddsd %%xmm1, %%xmm0\t\t# xmm0 += xmm1\n");
+        }
+        if (operator == '-' && dataType == INT) {
+            addToCompiled("\n\tsub %%rbx, %%rax\t\t# rax = rax - rbx\n");
+        }
+        if (operator == '-' && dataType == FLOAT) {
+            addToCompiled("\n\tsubsd %%xmm1, %%xmm0\t\t# xmm0 -= xmm1\n");
+        }
+        if (dataType == INT) {
+            addToCompiled("\tpush %%rax\n\n");
+        }
+        if (dataType == FLOAT) {
+            addToCompiled(
+                "\n"
+                "\tsub $8, %%rsp\t\t\t\t\t# Make space on stack for 8 bytes\n"
+                "\tmovsd %%xmm0, (%%rsp)\t\t\t\t# Store 8 bytes (double) on stack\n\n"
+            );
+        }
     }
     return dataType;
 }

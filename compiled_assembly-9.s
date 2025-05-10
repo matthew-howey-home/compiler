@@ -1,7 +1,7 @@
 .section .data
 
-float_var_0: .double 2.0
-float_var_1: .double 1.0
+float_var_1: .double 2.0
+float_var_2: .double 1.0
 
 ######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (data section)
 number_format:
@@ -22,21 +22,24 @@ main:
 	# Evaluating: 2.0+1.0
 
 	sub $8, %rsp					# Make space on stack for 8 bytes
-	movsd float_var_0(%rip), %xmm0
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
-
-	sub $8, %rsp					# Make space on stack for 8 bytes
 	movsd float_var_1(%rip), %xmm0
 	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
 
+	sub $8, %rsp					# Make space on stack for 8 bytes
+	movsd float_var_2(%rip), %xmm0
+	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
 
-	%xmm0, (%rsp)		# Load 8-byte float from the top of the stack into xmm0
-	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
-	%xmm1, (%rsp)		# Load 8-byte float from the top of the stack into xmm1
+
+	movsd (%rsp), %xmm1		# Load 8-byte float from the top of the stack into xmm1
 	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
 
-	add %rbx, %rax		# rax = rax + rbx
-	push %rax
+	movsd (%rsp), %xmm0		# Load 8-byte float from the top of the stack into xmm0
+	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+
+	addsd %xmm1, %xmm0		# xmm0 += xmm1
+
+	sub $8, %rsp					# Make space on stack for 8 bytes
+	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
 
 ######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %rax          # save result from evaluation to rax
