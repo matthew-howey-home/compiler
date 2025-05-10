@@ -29,9 +29,6 @@ main:
 	movsd float_var_1(%rip), %xmm0
 	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
 
-
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
 	add %rbx, %rax		# rax = rax + rbx
 	push %rax
 

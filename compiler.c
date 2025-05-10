@@ -159,11 +159,13 @@ enum DataType parseExpression() {
         char operator = currentChar;
         nextChar();
         parseTerm();
-        addToCompiled(
-            "\n"
-            "\tpop %%rbx\t\t\t# right hand operand\n"
-            "\tpop %%rax\t\t\t# left hand operand\n"
-        );
+        if (dataType == INT) {
+            addToCompiled(
+                "\n"
+                "\tpop %%rbx\t\t\t# right hand operand\n"
+                "\tpop %%rax\t\t\t# left hand operand\n"
+            );
+        }
         if (operator == '+') {
             addToCompiled("\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
         } else {
