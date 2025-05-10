@@ -65,11 +65,11 @@ void pushFloat(char* numberAsString) {
     sprintf(buffer, "float_var_%d: .double %s\n", floatIndex, numberAsString);
     addToDataSection(buffer);
 
-    addToCompiled("\tsub $8, %%rsp\t\t# Make space on stack for 8 bytes\n");
+    addToCompiled("\tsub $8, %%rsp\t\t\t\t\t# Make space on stack for 8 bytes\n");
     buffer = malloc(100);
     sprintf(buffer, "\tmovsd float_var_%d(%%%%rip), %%%%xmm0\n", floatIndex);
     addToCompiled(buffer);
-    addToCompiled("\tmovsd %%xmm0, (%%rsp)\t\t# Store 8 bytes (double) on stack\n");
+    addToCompiled("\tmovsd %%xmm0, (%%rsp)\t\t\t\t# Store 8 bytes (double) on stack\n\n");
 
     free(buffer);
     floatIndex++;
