@@ -24,8 +24,8 @@ main:
 
 	pop %rbx			# right hand operand
 	pop %rax			# left hand operand
-	cqo				# convert quad rax to oct rdx:rax
-	idiv %rbx		# rax = rdx:rax / rbx
+	cqo					# convert quad rax to oct rdx:rax
+	idiv %rbx			# rax = rdx:rax / rbx
 	push %rax
 
 	push $3

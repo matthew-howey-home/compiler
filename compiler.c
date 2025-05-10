@@ -141,8 +141,8 @@ enum DataType parseTerm() {
             addToCompiled("\timul %%rbx, %%rax\t\t# rax = rax * rbx\n");
         } else {
             addToCompiled(
-                "\tcqo\t\t\t\t# convert quad rax to oct rdx:rax\n"
-                "\tidiv %%rbx\t\t# rax = rdx:rax / rbx\n"
+                "\tcqo\t\t\t\t\t# convert quad rax to oct rdx:rax\n"
+                "\tidiv %%rbx\t\t\t# rax = rdx:rax / rbx\n"
             );
         }
         addToCompiled("\tpush %%rax\n\n");
