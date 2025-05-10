@@ -1,10 +1,10 @@
 .section .data
 
-float_var_0: .float 2.0
+float_var_0: .double 2.0
 
 ######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (data section)
 number_format:
-    .string "%d"
+    .string "%f"
 buffer:
     .space 200
 
@@ -23,7 +23,7 @@ main:
 	sub $8, %rsp		# Make space on stack for 8 bytes
 	movsd float_var_0(%rip), %xmm0
 	movsd %xmm0, (%rsp)		# Store 8 bytes (double) on stack
-######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (main code)
+######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %rax              # save result from evaluation to rax
 
     subq $40, %rsp            # save 32 shadow space + 8 for 64bit alignment

@@ -62,7 +62,7 @@ void pushInt(char* numberAsString) {
 
 void pushFloat(char* numberAsString) {
     char* buffer = malloc(100);
-    sprintf(buffer, "float_var_%d: .float %s\n", floatIndex, numberAsString);
+    sprintf(buffer, "float_var_%d: .double %s\n", floatIndex, numberAsString);
     addToDataSection(buffer);
 
     addToCompiled("\tsub $8, %%rsp\t\t# Make space on stack for 8 bytes\n");
@@ -76,7 +76,7 @@ void pushFloat(char* numberAsString) {
 }
 
 // Parse a number and emit a push instruction
-void parseNumber() {
+enum DataType parseNumber() {
     enum DataType dataType = INT;
  
     char* numberAsString = malloc(20);
@@ -94,9 +94,11 @@ void parseNumber() {
         pushFloat(numberAsString);
     }
     free(numberAsString);
+
+    return dataType;
 }
 
-void parseExpression();
+enum DataType parseExpression();
 
 void parseFactorInBrackets() {
     nextChar();
@@ -110,17 +112,20 @@ void parseFactorInBrackets() {
     }
 }
 
-void parseFactor() {
+enum DataType parseFactor() {
+    enum DataType dataType;
     skipWhitespace();
     if (isDigit(currentChar)) {
-        parseNumber();  // emits "push number"
+        dataType = parseNumber();  // emits "push number"
     } else if (currentChar == '(') {
         parseFactorInBrackets();
     }
+    return dataType;
 }
 
-void parseTerm() {
-    parseFactor();
+enum DataType parseTerm() {
+    enum DataType dataType;
+    dataType = parseFactor();
 
     skipWhitespace();
     while (currentChar == '*' || currentChar == '/') {
@@ -142,10 +147,12 @@ void parseTerm() {
         }
         addToCompiled("\tpush %%rax\n\n");
     }
+    return dataType;
 }
 
-void parseExpression() {
-    parseTerm();
+enum DataType parseExpression() {
+    enum DataType dataType;
+    dataType = parseTerm();
 
     skipWhitespace();
     while (currentChar == '+' || currentChar == '-') {
@@ -167,16 +174,17 @@ void parseExpression() {
             "\tpush %%rax\n\n"
         );
     }
+    return dataType;
 }
 
-void compileInput() {
+enum DataType compileInput() {
     pos = 0;
 
     nextChar();
 
-    parseExpression();
+    enum DataType dataType = parseExpression();
 
-    return;
+    return dataType;
 }
 
 char* loadFile(char* filename) {
@@ -192,16 +200,23 @@ char* loadFile(char* filename) {
     return output;
 }
 
-void finalCode() {
-    char* datasection = loadFile("fragment-sectiondata-int-out.s");
+void finalCode(enum DataType dataType) {
+    char* datasection;
+    if (dataType == INT) {
+        datasection = loadFile("fragment-sectiondata-int-out.s");
+    } else if (dataType == FLOAT) {
+         datasection = loadFile("fragment-sectiondata-float-out.s");
+    }
     addToDataSection(datasection);
     free(datasection);
     datasection = NULL;
 
-    char* mainIntout = loadFile("fragment-main-int-out.s");
-    addToCompiled(mainIntout);
-    free(mainIntout);
-    mainIntout = NULL; 
+    char* main;
+    main = loadFile("fragment-main-int-out.s");
+    
+    addToCompiled(main);
+    free(main);
+    main = NULL; 
 }
 
 
@@ -218,9 +233,9 @@ char* compiler(char* input) {
     addToCompiled("\n\n");
 
     // generate main code
-    compileInput();
+    enum DataType dataType = compileInput();
 
-    finalCode();
+    finalCode(dataType);
 
     char* output = malloc(5000);
 
