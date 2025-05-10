@@ -29,6 +29,12 @@ main:
 	movsd float_var_1(%rip), %xmm0
 	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
 
+
+	%xmm0, (%rsp)		# Load 8-byte float from the top of the stack into xmm0
+	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+	%xmm1, (%rsp)		# Load 8-byte float from the top of the stack into xmm1
+	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+
 	add %rbx, %rax		# rax = rax + rbx
 	push %rax
 

@@ -74,7 +74,7 @@ int main() {
     testCompiler(" 2 * (11 - 2 ) ", 18, 7);
    
     testCompiler("2.0", 2, 8);
-   //  testCompiler("2.0+1.0", 3, 9);
+    // testCompiler("2.0+1.0", 3, 9);
    
 
     if (failedTests > 0) {

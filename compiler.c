@@ -165,7 +165,16 @@ enum DataType parseExpression() {
                 "\tpop %%rbx\t\t\t# right hand operand\n"
                 "\tpop %%rax\t\t\t# left hand operand\n"
             );
+        } else if (dataType == FLOAT) {
+            addToCompiled(
+                "\n"
+                "\t%%xmm0, (%%rsp)\t\t# Load 8-byte float from the top of the stack into xmm0\n"
+                "\tadd $8, %%rsp\t\t# Adjust the stack pointer (pop 8 bytes)\n"
+                "\t%%xmm1, (%%rsp)\t\t# Load 8-byte float from the top of the stack into xmm1\n"
+                "\tadd $8, %%rsp\t\t# Adjust the stack pointer (pop 8 bytes)\n\n"
+            );
         }
+
         if (operator == '+') {
             addToCompiled("\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
         } else {
