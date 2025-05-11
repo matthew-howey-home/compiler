@@ -34,7 +34,7 @@ char* getOutputFromFile() {
     return buffer;
 }
 
-void testCompiler(char* input, int expectedResult, int fileIndex) {
+void testCompiler(char* input, double expectedResult, int fileIndex) {
     char* compiled = compiler(input);
 
     writeCompiledToFile(compiled, fileIndex);
@@ -52,13 +52,13 @@ void testCompiler(char* input, int expectedResult, int fileIndex) {
     printf("Output from running assembled machine code: %s\n\n", output);
 
     char *endptr;
-    int result = strtol(output, &endptr, 10);  // base 10
+    double result = strtod(output, &endptr);
     free(output);
 
     if (result == expectedResult) {
         printf("Test Passed!\n");
     } else {
-        printf("****************OH NO*********!!!!! Test failed,\n expected result %d, actual result %d\n", expectedResult, result);
+        printf("****************OH NO*********!!!!! Test failed,\n expected result %f, actual result %f\n", expectedResult, result);
         failedTests++;
     }
 }
@@ -82,6 +82,8 @@ int main() {
     testCompiler("2.5 + 2.5", 5, 12);
     testCompiler("5.0 - 2", 3, 13);
     testCompiler("2 + 3.0 - 5 + 6.0", 6, 14);
+    testCompiler("2 + 2.5", 4.5, 15);
+    testCompiler("3.5 - 2.2 + 8.1", 9.4, 16);
    
 
     if (failedTests > 0) {
