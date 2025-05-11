@@ -65,11 +65,11 @@ void pushFloat(char* numberAsString) {
     sprintf(buffer, "float_var_%d: .double %s\n", floatIndex, numberAsString);
     addToDataSection(buffer);
 
-    addToCompiled("\tsub $8, %%rsp\t\t\t\t\t# Make space on stack for 8 bytes\n");
+    addToCompiled("\tsub $8, %%rsp\t\t\t# Push float (as double) to stack\n");
     buffer = malloc(100);
     sprintf(buffer, "\tmovsd float_var_%d(%%%%rip), %%%%xmm0\n", floatIndex);
     addToCompiled(buffer);
-    addToCompiled("\tmovsd %%xmm0, (%%rsp)\t\t\t\t# Store 8 bytes (double) on stack\n\n");
+    addToCompiled("\tmovsd %%xmm0, (%%rsp)\n\n");
 
     free(buffer);
     floatIndex++;
@@ -134,18 +134,18 @@ enum DataType parseTerm() {
         parseFactor();
         addToCompiled(
             "\n"
-            "\tpop %%rbx\t\t\t# right hand operand\n"
-            "\tpop %%rax\t\t\t# left hand operand\n"
+            "\tpop %%rbx\t\t\t# pop right hand operand int from stack into rbx\n"
+            "\tpop %%rax\t\t\t# pop left hand operand int from stack into rax\n"
         );
         if (operator == '*') {
-            addToCompiled("\timul %%rbx, %%rax\t\t# rax = rax * rbx\n");
+            addToCompiled("\timul %%rbx, %%rax\t\t# operation: rax = rax * rbx\n");
         } else {
             addToCompiled(
-                "\tcqo\t\t\t\t\t# convert quad rax to oct rdx:rax\n"
-                "\tidiv %%rbx\t\t\t# rax = rdx:rax / rbx\n"
+                "\tcqo\t\t\t\t\t# convert quad rax to octal rdx:rax\n"
+                "\tidiv %%rbx\t\t\t# operation: rax = rdx:rax / rbx\n"
             );
         }
-        addToCompiled("\tpush %%rax\n\n");
+        addToCompiled("\tpush %%rax\t\t\t# save result of operation on stack\n\n");
     }
     return dataType;
 }
@@ -167,51 +167,51 @@ enum DataType parseExpression() {
         if (dataType == INT) {
             addToCompiled(
                 "\n"
-                "\tpop %%rbx\t\t\t# right hand operand\n"
-                "\tpop %%rax\t\t\t# left hand operand\n\n"
+                "\tpop %%rbx\t\t\t# pop right hand operand int from stack into rbx\n"
+                "\tpop %%rax\t\t\t# pop left hand operand int from stack into rax\n\n"
             );
             if (operator == '+') {
-                addToCompiled("\n\tadd %%rbx, %%rax\t\t# rax = rax + rbx\n");
+                addToCompiled("\n\tadd %%rbx, %%rax\t\t# int operation: rax = rax + rbx\n");
             } else if (operator == '-') {
-                addToCompiled("\n\tsub %%rbx, %%rax\t\t# rax = rax - rbx\n");
+                addToCompiled("\n\tsub %%rbx, %%rax\t\t# int operation: rax = rax - rbx\n");
             }
-            addToCompiled("\tpush %%rax\n\n");
+            addToCompiled("\tpush %%rax\t\t\t\t# save result of int operation to stack\n\n");
         } else if (dataType == FLOAT) {
             if (rightOperandDataType == FLOAT) {
                 addToCompiled(
                     "\n"
-                    "\tmovsd (%%rsp), %%xmm1\t\t# Load 8-byte float from the top of the stack into xmm1\n"
-                    "\tadd $8, %%rsp\t\t# Adjust the stack pointer (pop 8 bytes)\n"
+                    "\tmovsd (%%rsp), %%xmm1\t\t# pop right hand operand float from stack into xmm1\n"
+                    "\tadd $8, %%rsp\n"
                 );
             } else if (rightOperandDataType == INT) {
                 addToCompiled(
                     "\n"
-                    "\tpop %%rax\n"
-                    "\tcvtsi2sd %%rax, %%xmm1\t\t#Convert int to float\n"
+                    "\tpop %%rax\t\t\t\t# pop right hand operand int from stack into rax\n"
+                    "\tcvtsi2sd %%rax, %%xmm1\t# Convert int rax to float in xmm1\n"
                 );
             }
             if (leftOperandDataType == FLOAT) {
                 addToCompiled(
                     "\n"
-                    "\tmovsd (%%rsp), %%xmm0\t\t# Load 8-byte float from the top of the stack into xmm0\n"
-                    "\tadd $8, %%rsp\t\t# Adjust the stack pointer (pop 8 bytes)\n"
+                    "\tmovsd (%%rsp), %%xmm0\t\t# pop left hand operand float from stack into xmm0\n"
+                    "\tadd $8, %%rsp\n"
                 );
             } else if (leftOperandDataType == INT) {
                 addToCompiled(
                     "\n"
-                    "\tpop %%rax\n"
-                    "\tcvtsi2sd %%rax, %%xmm0\t\t#Convert int to float\n"
+                    "\tpop %%rax\t\t\t\t# pop right hand operand int from stack into rax\n"
+                    "\tcvtsi2sd %%rax, %%xmm0\t# Convert int rax to float in xmm0\n"
                 );
             }
             if (operator == '+') {
-                addToCompiled("\n\taddsd %%xmm1, %%xmm0\t\t# xmm0 += xmm1\n");
+                addToCompiled("\n\taddsd %%xmm1, %%xmm0\t\t# float operation: xmm0 = xmm0 + xmm1\n");
             } else  if (operator == '-') {
-                addToCompiled("\n\tsubsd %%xmm1, %%xmm0\t\t# xmm0 -= xmm1\n");
+                addToCompiled("\n\tsubsd %%xmm1, %%xmm0\t\t# float operation: xmm0 = xmm0 - xmm1\n");
             }
             addToCompiled(
                 "\n"
-                "\tsub $8, %%rsp\t\t\t\t\t# Make space on stack for 8 bytes\n"
-                "\tmovsd %%xmm0, (%%rsp)\t\t\t\t# Store 8 bytes (double) on stack\n\n"
+                "\tsub $8, %%rsp\t\t\t# save result of float operation to stack\n"
+                "\tmovsd %%xmm0, (%%rsp)\n\n"
             );
             leftOperandDataType = dataType;
         }

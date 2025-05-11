@@ -21,21 +21,21 @@ main:
 	# Evaluating: 1+2.0
 
 	push $1
-	sub $8, %rsp					# Make space on stack for 8 bytes
+	sub $8, %rsp			# Push float (as double) to stack
 	movsd float_var_6(%rip), %xmm0
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
+	movsd %xmm0, (%rsp)
 
 
-	movsd (%rsp), %xmm1		# Load 8-byte float from the top of the stack into xmm1
-	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+	movsd (%rsp), %xmm1		# pop right hand operand float from stack into xmm1
+	add $8, %rsp
 
-	pop %rax
-	cvtsi2sd %rax, %xmm0		#Convert int to float
+	pop %rax				# pop right hand operand int from stack into rax
+	cvtsi2sd %rax, %xmm0	# Convert int rax to float in xmm0
 
-	addsd %xmm1, %xmm0		# xmm0 += xmm1
+	addsd %xmm1, %xmm0		# float operation: xmm0 = xmm0 + xmm1
 
-	sub $8, %rsp					# Make space on stack for 8 bytes
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
+	sub $8, %rsp			# save result of float operation to stack
+	movsd %xmm0, (%rsp)
 
 ######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %rax          # save result from evaluation to rax

@@ -23,18 +23,18 @@ main:
 	push $11
 	push $2
 
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
+	pop %rbx			# pop right hand operand int from stack into rbx
+	pop %rax			# pop left hand operand int from stack into rax
 
 
-	sub %rbx, %rax		# rax = rax - rbx
-	push %rax
+	sub %rbx, %rax		# int operation: rax = rax - rbx
+	push %rax				# save result of int operation to stack
 
 
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
-	imul %rbx, %rax		# rax = rax * rbx
-	push %rax
+	pop %rbx			# pop right hand operand int from stack into rbx
+	pop %rax			# pop left hand operand int from stack into rax
+	imul %rbx, %rax		# operation: rax = rax * rbx
+	push %rax			# save result of operation on stack
 
 ######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %rax          # save result from evaluation to rax

@@ -22,12 +22,12 @@ main:
 	push $1
 	push $4
 
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
+	pop %rbx			# pop right hand operand int from stack into rbx
+	pop %rax			# pop left hand operand int from stack into rax
 
 
-	add %rbx, %rax		# rax = rax + rbx
-	push %rax
+	add %rbx, %rax		# int operation: rax = rax + rbx
+	push %rax				# save result of int operation to stack
 
 ######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %rax          # save result from evaluation to rax

@@ -22,41 +22,41 @@ method:
 main:
 	# Evaluating: 2.0+1.0+3.0
 
-	sub $8, %rsp					# Make space on stack for 8 bytes
+	sub $8, %rsp			# Push float (as double) to stack
 	movsd float_var_3(%rip), %xmm0
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
+	movsd %xmm0, (%rsp)
 
-	sub $8, %rsp					# Make space on stack for 8 bytes
+	sub $8, %rsp			# Push float (as double) to stack
 	movsd float_var_4(%rip), %xmm0
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
+	movsd %xmm0, (%rsp)
 
 
-	movsd (%rsp), %xmm1		# Load 8-byte float from the top of the stack into xmm1
-	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+	movsd (%rsp), %xmm1		# pop right hand operand float from stack into xmm1
+	add $8, %rsp
 
-	movsd (%rsp), %xmm0		# Load 8-byte float from the top of the stack into xmm0
-	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+	movsd (%rsp), %xmm0		# pop left hand operand float from stack into xmm0
+	add $8, %rsp
 
-	addsd %xmm1, %xmm0		# xmm0 += xmm1
+	addsd %xmm1, %xmm0		# float operation: xmm0 = xmm0 + xmm1
 
-	sub $8, %rsp					# Make space on stack for 8 bytes
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
+	sub $8, %rsp			# save result of float operation to stack
+	movsd %xmm0, (%rsp)
 
-	sub $8, %rsp					# Make space on stack for 8 bytes
+	sub $8, %rsp			# Push float (as double) to stack
 	movsd float_var_5(%rip), %xmm0
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
+	movsd %xmm0, (%rsp)
 
 
-	movsd (%rsp), %xmm1		# Load 8-byte float from the top of the stack into xmm1
-	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+	movsd (%rsp), %xmm1		# pop right hand operand float from stack into xmm1
+	add $8, %rsp
 
-	movsd (%rsp), %xmm0		# Load 8-byte float from the top of the stack into xmm0
-	add $8, %rsp		# Adjust the stack pointer (pop 8 bytes)
+	movsd (%rsp), %xmm0		# pop left hand operand float from stack into xmm0
+	add $8, %rsp
 
-	addsd %xmm1, %xmm0		# xmm0 += xmm1
+	addsd %xmm1, %xmm0		# float operation: xmm0 = xmm0 + xmm1
 
-	sub $8, %rsp					# Make space on stack for 8 bytes
-	movsd %xmm0, (%rsp)				# Store 8 bytes (double) on stack
+	sub $8, %rsp			# save result of float operation to stack
+	movsd %xmm0, (%rsp)
 
 ######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %rax          # save result from evaluation to rax

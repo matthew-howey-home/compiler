@@ -22,43 +22,43 @@ main:
 	push $10
 	push $5
 
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
-	cqo					# convert quad rax to oct rdx:rax
-	idiv %rbx			# rax = rdx:rax / rbx
-	push %rax
+	pop %rbx			# pop right hand operand int from stack into rbx
+	pop %rax			# pop left hand operand int from stack into rax
+	cqo					# convert quad rax to octal rdx:rax
+	idiv %rbx			# operation: rax = rdx:rax / rbx
+	push %rax			# save result of operation on stack
 
 	push $3
 	push $2
 
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
-	imul %rbx, %rax		# rax = rax * rbx
-	push %rax
+	pop %rbx			# pop right hand operand int from stack into rbx
+	pop %rax			# pop left hand operand int from stack into rax
+	imul %rbx, %rax		# operation: rax = rax * rbx
+	push %rax			# save result of operation on stack
 
 	push $3
 
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
-	imul %rbx, %rax		# rax = rax * rbx
-	push %rax
+	pop %rbx			# pop right hand operand int from stack into rbx
+	pop %rax			# pop left hand operand int from stack into rax
+	imul %rbx, %rax		# operation: rax = rax * rbx
+	push %rax			# save result of operation on stack
 
 
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
+	pop %rbx			# pop right hand operand int from stack into rbx
+	pop %rax			# pop left hand operand int from stack into rax
 
 
-	add %rbx, %rax		# rax = rax + rbx
-	push %rax
+	add %rbx, %rax		# int operation: rax = rax + rbx
+	push %rax				# save result of int operation to stack
 
 	push $11
 
-	pop %rbx			# right hand operand
-	pop %rax			# left hand operand
+	pop %rbx			# pop right hand operand int from stack into rbx
+	pop %rax			# pop left hand operand int from stack into rax
 
 
-	sub %rbx, %rax		# rax = rax - rbx
-	push %rax
+	sub %rbx, %rax		# int operation: rax = rax - rbx
+	push %rax				# save result of int operation to stack
 
 ######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %rax          # save result from evaluation to rax
