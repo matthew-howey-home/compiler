@@ -19,8 +19,10 @@ method:
 main:
 	# Evaluating: 10 / 5 +3*  2-11 + 5
 
-	push $10
-	push $5
+	push $10		# Push int to stack
+
+	push $5		# Push int to stack
+
 
 	pop %rbx			# pop right hand operand int from stack into rbx
 	pop %rax			# pop left hand operand int from stack into rax
@@ -28,8 +30,10 @@ main:
 	idiv %rbx			# operation: rax = rdx:rax / rbx
 	push %rax			# save result of operation on stack
 
-	push $3
-	push $2
+	push $3		# Push int to stack
+
+	push $2		# Push int to stack
+
 
 	pop %rbx			# pop right hand operand int from stack into rbx
 	pop %rax			# pop left hand operand int from stack into rax
@@ -44,7 +48,8 @@ main:
 	add %rbx, %rax		# int operation: rax = rax + rbx
 	push %rax				# save result of int operation to stack
 
-	push $11
+	push $11		# Push int to stack
+
 
 	pop %rbx			# pop right hand operand int from stack into rbx
 	pop %rax			# pop left hand operand int from stack into rax
@@ -53,7 +58,8 @@ main:
 	sub %rbx, %rax		# int operation: rax = rax - rbx
 	push %rax				# save result of int operation to stack
 
-	push $5
+	push $5		# Push int to stack
+
 
 	pop %rbx			# pop right hand operand int from stack into rbx
 	pop %rax			# pop left hand operand int from stack into rax

@@ -19,8 +19,10 @@ method:
 main:
 	# Evaluating:  1 + 4 
 
-	push $1
-	push $4
+	push $1		# Push int to stack
+
+	push $4		# Push int to stack
+
 
 	pop %rbx			# pop right hand operand int from stack into rbx
 	pop %rax			# pop left hand operand int from stack into rax

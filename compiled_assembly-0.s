@@ -19,7 +19,8 @@ method:
 main:
 	# Evaluating: 23647
 
-	push $23647
+	push $23647		# Push int to stack
+
 ######################## Fragment of code to write the result of evaluation to a file output.txt, formatted as integer (main code)
     popq %rax          # save result from evaluation to rax
 

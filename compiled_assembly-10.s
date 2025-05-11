@@ -20,7 +20,8 @@ method:
 main:
 	# Evaluating: 1+2.0
 
-	push $1
+	push $1		# Push int to stack
+
 	sub $8, %rsp			# Push float (as double) to stack
 	movsd float_var_6(%rip), %xmm0
 	movsd %xmm0, (%rsp)

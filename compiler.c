@@ -55,7 +55,7 @@ int isDigit(char c) {
 
 void pushInt(char* numberAsString) {
     char* buffer = malloc(100);
-    sprintf(buffer, "\tpush $%s\n", numberAsString);
+    sprintf(buffer, "\tpush $%s\t\t# Push int to stack\n\n", numberAsString);
     addToCompiled(buffer);
     free(buffer);
 }

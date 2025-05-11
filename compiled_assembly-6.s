@@ -19,9 +19,12 @@ method:
 main:
 	# Evaluating: 2*(3+8)
 
-	push $2
-	push $3
-	push $8
+	push $2		# Push int to stack
+
+	push $3		# Push int to stack
+
+	push $8		# Push int to stack
+
 
 	pop %rbx			# pop right hand operand int from stack into rbx
 	pop %rax			# pop left hand operand int from stack into rax

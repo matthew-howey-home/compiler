@@ -20,7 +20,8 @@ method:
 main:
 	# Evaluating: 1+2.0+3
 
-	push $1
+	push $1		# Push int to stack
+
 	sub $8, %rsp			# Push float (as double) to stack
 	movsd float_var_7(%rip), %xmm0
 	movsd %xmm0, (%rsp)
@@ -37,7 +38,8 @@ main:
 	sub $8, %rsp			# save result of float operation to stack
 	movsd %xmm0, (%rsp)
 
-	push $3
+	push $3		# Push int to stack
+
 
 	pop %rax				# pop right hand operand int from stack into rax
 	cvtsi2sd %rax, %xmm1	# Convert int rax to float in xmm1
