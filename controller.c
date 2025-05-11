@@ -8,8 +8,8 @@ char* compiler(char* input);
 int failedTests = 0;
 
 int writeCompiledToFile (char* compiled, int fileIndex) {
-    char* filename = malloc(20);
-    sprintf(filename, "compiled_assembly-%d.s", fileIndex);
+    char* filename = malloc(50);
+    sprintf(filename, "./compiled-files/compiled_assembly-%d.s", fileIndex);
 
     FILE *file = fopen(filename, "w");
     if (file == NULL) {
@@ -41,7 +41,7 @@ void testCompiler(char* input, double expectedResult, int fileIndex) {
 
     // Assemble compiled assembly
     char* buffer = malloc(100);
-    sprintf(buffer, "gcc -o assembled_machine_code.exe compiled_assembly-%d.s", fileIndex);
+    sprintf(buffer, "gcc -o assembled_machine_code.exe compiled-files\\compiled_assembly-%d.s", fileIndex);
     system(buffer);
     free(buffer);
 
