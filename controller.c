@@ -79,6 +79,9 @@ int main() {
 
     testCompiler("1+2.0", 3, 10);
     testCompiler("1+2.0+3", 6, 11);
+    testCompiler("2.5 + 2.5", 5, 12);
+    testCompiler("5.0 - 2", 3, 13);
+    testCompiler("2 + 3.0 - 5 + 6.0", 6, 14);
    
 
     if (failedTests > 0) {
