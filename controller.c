@@ -88,6 +88,11 @@ int main() {
     testCompiler("2.0 * 3.0", 6, 17);
     testCompiler("2 * 3.4", 6.8, 18);
     testCompiler("3 + 4.5 * 2 - 8", 4, 19);
+
+    testCompiler(" 3.0 / 2", 1.5, 20);
+    testCompiler("1 / 3.0 * 3", 1, 21);
+    testCompiler("1 / 3 * 3.0", 0, 22);
+    testCompiler("1 * (2 + 3.0) ", 5, 23);
    
 
     if (failedTests > 0) {

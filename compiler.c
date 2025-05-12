@@ -100,9 +100,9 @@ enum DataType parseNumber() {
 
 enum DataType parseExpression();
 
-void parseFactorInBrackets() {
+enum DataType parseFactorInBrackets() {
     nextChar();
-    parseExpression();
+    enum DataType dataType = parseExpression();
     skipWhitespace();
     if (currentChar == ')') {
         nextChar();
@@ -110,6 +110,7 @@ void parseFactorInBrackets() {
         printf("Error: expected )");
         exit(1);
     }
+    return dataType;
 }
 
 enum DataType parseFactor() {
@@ -118,7 +119,7 @@ enum DataType parseFactor() {
     if (isDigit(currentChar)) {
         dataType = parseNumber();  // emits "push number"
     } else if (currentChar == '(') {
-        parseFactorInBrackets();
+        dataType = parseFactorInBrackets();
     }
     return dataType;
 }
@@ -181,6 +182,8 @@ enum DataType parseTerm() {
             }
             if (operator == '*') {
                 addToCompiled("\n\tmulsd %%xmm1, %%xmm0\t\t# float operation: xmm0 = xmm0 * xmm1\n");
+            } else if (operator == '/') {
+                addToCompiled("\n\tdivsd %%xmm1, %%xmm0\t\t# float operation: xmm0 = xmm0 / xmm1\n");
             }
             addToCompiled(
                 "\n"
