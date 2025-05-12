@@ -4,7 +4,8 @@ This is a project to illustrate the principles of a single pass compiler.
 
 It is highly OS / Hardware specific and I believe will only work on Windows x86_64 
 
-It compiles from a simple C like language into AT&T assembly using gcc.
+It is intended to compile from a simple C like language into AT&T assembly using gcc.
+At present it only compiles mathematical expressions with integer and float literals.
 
 The compiler is written in C (compiler.c).
 
