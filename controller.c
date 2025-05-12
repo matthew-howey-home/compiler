@@ -85,7 +85,9 @@ int main() {
     testCompiler("2 + 2.5", 4.5, 15);
     testCompiler("3.5 - 2.2 + 8.1", 9.4, 16);
 
-    // testCompiler("2.0 * 3.0", 6, 17); 
+    testCompiler("2.0 * 3.0", 6, 17);
+    testCompiler("2 * 3.4", 6.8, 18);
+    testCompiler("3 + 4.5 * 2 - 8", 4, 19);
    
 
     if (failedTests > 0) {

@@ -30,7 +30,7 @@ main:
 	movsd (%rsp), %xmm1		# pop right hand operand float from stack into xmm1
 	add $8, %rsp
 
-	pop %rax				# pop right hand operand int from stack into rax
+	pop %rax				# pop left hand operand int from stack into rax
 	cvtsi2sd %rax, %xmm0	# Convert int rax to float in xmm0
 
 	addsd %xmm1, %xmm0		# float operation: xmm0 = xmm0 + xmm1

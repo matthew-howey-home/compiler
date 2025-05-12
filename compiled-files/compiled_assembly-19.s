@@ -1,6 +1,6 @@
 .section .data
 
-float_var_13: .double 2.5
+float_var_20: .double 4.5
 
 ######################## Frgament of code to write the result of evaluation to a file output.txt, fomratted as integer (data section)
 number_format:
@@ -18,12 +18,26 @@ method:
 .global main
 
 main:
-	# Evaluating: 2 + 2.5
+	# Evaluating: 3 + 4.5 * 2 - 8
+
+	push $3		# Push int to stack
+
+	sub $8, %rsp			# Push float (as double) to stack
+	movsd float_var_20(%rip), %xmm0
+	movsd %xmm0, (%rsp)
 
 	push $2		# Push int to stack
 
-	sub $8, %rsp			# Push float (as double) to stack
-	movsd float_var_13(%rip), %xmm0
+
+	pop %rax				# pop right hand operand int from stack into rax
+	cvtsi2sd %rax, %xmm1	# Convert int rax to float in xmm1
+
+	movsd (%rsp), %xmm0		# pop left hand operand float from stack into xmm0
+	add $8, %rsp
+
+	mulsd %xmm1, %xmm0		# float operation: xmm0 = xmm0 * xmm1
+
+	sub $8, %rsp			# save result of float operation to stack
 	movsd %xmm0, (%rsp)
 
 
@@ -34,6 +48,20 @@ main:
 	cvtsi2sd %rax, %xmm0	# Convert int rax to float in xmm0
 
 	addsd %xmm1, %xmm0		# float operation: xmm0 = xmm0 + xmm1
+
+	sub $8, %rsp			# save result of float operation to stack
+	movsd %xmm0, (%rsp)
+
+	push $8		# Push int to stack
+
+
+	pop %rax				# pop right hand operand int from stack into rax
+	cvtsi2sd %rax, %xmm1	# Convert int rax to float in xmm1
+
+	movsd (%rsp), %xmm0		# pop left hand operand float from stack into xmm0
+	add $8, %rsp
+
+	subsd %xmm1, %xmm0		# float operation: xmm0 = xmm0 - xmm1
 
 	sub $8, %rsp			# save result of float operation to stack
 	movsd %xmm0, (%rsp)
