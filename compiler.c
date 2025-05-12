@@ -124,28 +124,35 @@ enum DataType parseFactor() {
 }
 
 enum DataType parseTerm() {
-    enum DataType dataType;
-    dataType = parseFactor();
+    enum DataType leftOperandDataType = parseFactor();
+    enum DataType dataType = leftOperandDataType;
 
     skipWhitespace();
     while (currentChar == '*' || currentChar == '/') {
         char operator = currentChar;
         nextChar();
-        parseFactor();
-        addToCompiled(
-            "\n"
-            "\tpop %%rbx\t\t\t# pop right hand operand int from stack into rbx\n"
-            "\tpop %%rax\t\t\t# pop left hand operand int from stack into rax\n"
-        );
-        if (operator == '*') {
-            addToCompiled("\timul %%rbx, %%rax\t\t# operation: rax = rax * rbx\n");
-        } else {
-            addToCompiled(
-                "\tcqo\t\t\t\t\t# convert quad rax to octal rdx:rax\n"
-                "\tidiv %%rbx\t\t\t# operation: rax = rdx:rax / rbx\n"
-            );
+        enum DataType rightOperandDataType = parseFactor();
+
+        if (leftOperandDataType == FLOAT || rightOperandDataType == FLOAT) {
+            dataType = FLOAT;
         }
-        addToCompiled("\tpush %%rax\t\t\t# save result of operation on stack\n\n");
+
+        if (dataType == INT) {
+            addToCompiled(
+                "\n"
+                "\tpop %%rbx\t\t\t# pop right hand operand int from stack into rbx\n"
+                "\tpop %%rax\t\t\t# pop left hand operand int from stack into rax\n"
+            );
+            if (operator == '*') {
+                addToCompiled("\timul %%rbx, %%rax\t\t# operation: rax = rax * rbx\n");
+            } else {
+                addToCompiled(
+                    "\tcqo\t\t\t\t\t# convert quad rax to octal rdx:rax\n"
+                    "\tidiv %%rbx\t\t\t# operation: rax = rdx:rax / rbx\n"
+                );
+            }
+            addToCompiled("\tpush %%rax\t\t\t# save result of operation on stack\n\n");
+        }
     }
     return dataType;
 }
