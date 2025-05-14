@@ -124,6 +124,35 @@ enum DataType parseFactor() {
     return dataType;
 }
 
+void popMixedDatatypes(enum DataType leftOperandDataType, enum DataType rightOperandDataType) {
+    if (rightOperandDataType == FLOAT) {
+        addToCompiled(
+            "\n"
+            "\tmovsd (%%rsp), %%xmm1\t\t# pop right hand operand float from stack into xmm1\n"
+            "\tadd $8, %%rsp\n"
+        );
+    } else if (rightOperandDataType == INT) {
+        addToCompiled(
+            "\n"
+            "\tpop %%rax\t\t\t\t# pop right hand operand int from stack into rax\n"
+            "\tcvtsi2sd %%rax, %%xmm1\t# Convert int rax to float in xmm1\n"
+        );
+    }
+    if (leftOperandDataType == FLOAT) {
+        addToCompiled(
+            "\n"
+            "\tmovsd (%%rsp), %%xmm0\t\t# pop left hand operand float from stack into xmm0\n"
+            "\tadd $8, %%rsp\n"
+        );
+    } else if (leftOperandDataType == INT) {
+        addToCompiled(
+            "\n"
+            "\tpop %%rax\t\t\t\t# pop left hand operand int from stack into rax\n"
+            "\tcvtsi2sd %%rax, %%xmm0\t# Convert int rax to float in xmm0\n"
+        );
+    }
+}
+
 enum DataType parseTerm() {
     enum DataType leftOperandDataType = parseFactor();
     enum DataType dataType = leftOperandDataType;
@@ -154,32 +183,7 @@ enum DataType parseTerm() {
             }
             addToCompiled("\tpush %%rax\t\t\t# save result of operation on stack\n\n");
         } else if (dataType == FLOAT) {
-            if (rightOperandDataType == FLOAT) {
-                addToCompiled(
-                    "\n"
-                    "\tmovsd (%%rsp), %%xmm1\t\t# pop right hand operand float from stack into xmm1\n"
-                    "\tadd $8, %%rsp\n"
-                );
-            } else if (rightOperandDataType == INT) {
-                addToCompiled(
-                    "\n"
-                    "\tpop %%rax\t\t\t\t# pop right hand operand int from stack into rax\n"
-                    "\tcvtsi2sd %%rax, %%xmm1\t# Convert int rax to float in xmm1\n"
-                );
-            }
-            if (leftOperandDataType == FLOAT) {
-                addToCompiled(
-                    "\n"
-                    "\tmovsd (%%rsp), %%xmm0\t\t# pop left hand operand float from stack into xmm0\n"
-                    "\tadd $8, %%rsp\n"
-                );
-            } else if (leftOperandDataType == INT) {
-                addToCompiled(
-                    "\n"
-                    "\tpop %%rax\t\t\t\t# pop left hand operand int from stack into rax\n"
-                    "\tcvtsi2sd %%rax, %%xmm0\t# Convert int rax to float in xmm0\n"
-                );
-            }
+            popMixedDatatypes(leftOperandDataType, rightOperandDataType);
             if (operator == '*') {
                 addToCompiled("\n\tmulsd %%xmm1, %%xmm0\t\t# float operation: xmm0 = xmm0 * xmm1\n");
             } else if (operator == '/') {
@@ -224,32 +228,7 @@ enum DataType parseExpression() {
             }
             addToCompiled("\tpush %%rax\t\t\t\t# save result of int operation to stack\n\n");
         } else if (dataType == FLOAT) {
-            if (rightOperandDataType == FLOAT) {
-                addToCompiled(
-                    "\n"
-                    "\tmovsd (%%rsp), %%xmm1\t\t# pop right hand operand float from stack into xmm1\n"
-                    "\tadd $8, %%rsp\n"
-                );
-            } else if (rightOperandDataType == INT) {
-                addToCompiled(
-                    "\n"
-                    "\tpop %%rax\t\t\t\t# pop right hand operand int from stack into rax\n"
-                    "\tcvtsi2sd %%rax, %%xmm1\t# Convert int rax to float in xmm1\n"
-                );
-            }
-            if (leftOperandDataType == FLOAT) {
-                addToCompiled(
-                    "\n"
-                    "\tmovsd (%%rsp), %%xmm0\t\t# pop left hand operand float from stack into xmm0\n"
-                    "\tadd $8, %%rsp\n"
-                );
-            } else if (leftOperandDataType == INT) {
-                addToCompiled(
-                    "\n"
-                    "\tpop %%rax\t\t\t\t# pop left hand operand int from stack into rax\n"
-                    "\tcvtsi2sd %%rax, %%xmm0\t# Convert int rax to float in xmm0\n"
-                );
-            }
+            popMixedDatatypes(leftOperandDataType, rightOperandDataType);
             if (operator == '+') {
                 addToCompiled("\n\taddsd %%xmm1, %%xmm0\t\t# float operation: xmm0 = xmm0 + xmm1\n");
             } else  if (operator == '-') {
