@@ -93,6 +93,8 @@ int main() {
     testCompiler("1 / 3.0 * 3", 1, 21);
     testCompiler("1 / 3 * 3.0", 0, 22);
     testCompiler("1 * (2 + 3.0) ", 5, 23);
+
+    testCompiler("1 * 4 / 2 +6.6 - 9 / (1 + 2)", 5.6, 24);
    
 
     if (failedTests > 0) {
